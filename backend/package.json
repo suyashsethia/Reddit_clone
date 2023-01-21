@@ -9,6 +9,8 @@
   "author": "Suyash Sethia",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "con": "^0.1.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.4"
   }
 }

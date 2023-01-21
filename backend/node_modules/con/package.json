@@ -1,0 +1,32 @@
+{
+  "name": "con",
+  "version": "0.1.3",
+  "description": "JSON from your console",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bredele/con.git"
+  },
+  "keywords": [
+    "json",
+    "console"
+  ],
+  "bin": {
+    "con": "bin/con"
+  },
+  "author": "Olivier Wietrich <olivier.wietrich@gmail.com> (http://github.com/bredele)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bredele/con/issues"
+  },
+  "homepage": "https://github.com/bredele/con",
+  "dependencies": {
+    "commander": "^2.2.0",
+    "component-emitter": "^1.1.2",
+    "datastore": "^1.0.1",
+    "emitter-queue": "^0.1.2",
+    "prettyjson": "^1.0.0",
+    "semver": "^2.2.1",
+    "store-path": "^0.1.0"
+  }
+}

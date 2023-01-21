@@ -3,24 +3,44 @@ import * as Icon from 'react-bootstrap-icons';
 
 const SignIn = () => {
     const [Email, SetEmail] = useState("")
-    const [password, SetPassword] = useState("")
+    const [Password, SetPassword] = useState("")
 
     const log = () => {
         // console.log(this.state)
         console.log(Email)
-        console.log(password)
+        console.log(Password)
     }
 
     const change = (e) => {
 
-        if (e.target.id === 'SignUpEmail') {
+        if (e.target.id === 'SignInEmail') {
             SetEmail(e.target.value)
         }
-        else if (e.target.id === 'SignUpPassword') {
+        else if (e.target.id === 'SignInPassword') {
 
             SetPassword(e.target.value)
         }
-
+    }
+    const posttoexpress = (e) => {
+        e.preventDefault();
+        fetch('http://localhost:100/SignIn', {
+            method: 'POST',
+            body: JSON.stringify({
+                "Email": Email,
+                "Password": Password
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((res) => res.json())
+            .then((post) => {
+                SetEmail('');
+                SetPassword('')
+            })
+            .catch((err) => {
+                console.log(err.message);
+            });
 
     }
     return (
@@ -63,12 +83,12 @@ const SignIn = () => {
                                             </div>
                                             {/* Email input */}
                                             <div className="form-outline mb-4">
-                                                <input onChange={change} value={Email} type="email" id="SignUpEmail" className="form-control" />
+                                                <input onChange={change} value={Email} type="email" id="SignInEmail" className="form-control" />
                                                 <label className="form-label" id="a" htmlFor="form3Example3 inputEmail4">Email address</label>
                                             </div>
                                             {/* Password input */}
                                             <div className="form-outline mb-4">
-                                                <input value={password} onChange={change} type="password" id="SignUpPassword" className="form-control" />
+                                                <input value={Password} onChange={change} type="password" id="SignInPassword" className="form-control" />
                                                 <label className="form-label" htmlFor="form3Example4">Password</label>
                                             </div>
                                             {/* Checkbox */}
@@ -79,7 +99,7 @@ const SignIn = () => {
                                                 </label>
                                             </div>
                                             {/* Submit button */}
-                                            <button onClick={log} type="submit" className="btn btn-primary btn-block mb-4">
+                                            <button onClick={posttoexpress} type="submit" className="btn btn-primary btn-block mb-4">
                                                 Sign in
                                             </button>
                                             {/* Register buttons */}
@@ -94,7 +114,7 @@ const SignIn = () => {
                                                 <button type="button" className="btn btn-link btn-floating mx-1">
                                                     <i className="fab fa-twitter" />
                                                 </button>
-                                                <button type="button" className="btn btn-link btn-floating mx-1">
+                                                <button  type="button" className="btn btn-link btn-floating mx-1">
                                                     <i className="fab fa-github" />
                                                 </button>
                                             </div>
