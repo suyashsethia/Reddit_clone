@@ -46,18 +46,26 @@ const SignIn = () => {
             },
         })
         let response = await res.json()
-        SetError(response.error)
-        console.log(Error)
-            // .then((res) => res.json())
-            // (data => (SetError(data.error)
-            // .then(console.log(Error))
-            // .then(() => {
-            //     SetEmail('');
-            //     SetPassword('');
-            // })
-            // .catch((err) => {
-            //     console.log(err.message);
-            // });
+        // SetError(response.error)
+        // console.log(Error)
+        console.log(response.error)
+        console.log(response.User_data)
+
+        // .then((res) => res.json())
+        // (data => (SetError(data.error)
+        // .then(console.log(Error))
+        // .then(() => {
+        //     SetEmail('');
+        //     SetPassword('');
+        // })
+        // .catch((err) => {
+        //     console.log(err.message);
+        // });
+        if (response.error === "Correct Login id") {
+            localStorage.setItem("UserData", JSON.stringify(response.User_data))
+        }
+        SetEmail('');
+        SetPassword('');
 
     }
     return (
