@@ -1,6 +1,14 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+// import { redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 const Navbar = () => {
+    const LogOut = () => {
+
+        localStorage.removeItem('UserData');
+        <Navigate to="SignIn"></Navigate>
+    }
+
     return (
         <div><nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">Navbar</a>
@@ -10,7 +18,7 @@ const Navbar = () => {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="visible navbar-nav mr-auto">
                     <li className="nav-item active">
-                    <Link className="nav-link float-right" to="">Home <span className="sr-only">(current)</span></Link>
+                        <Link className="nav-link float-right" to="">Home <span className="sr-only">(current)</span></Link>
 
                         {/* <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a> */}
                     </li>
@@ -39,6 +47,9 @@ const Navbar = () => {
                     </li>
                     <li className="nav-item active">
                         <Link className="nav-link float-right" to="ProfilePage"> Profile <span className="sr-only">(current)</span></Link>
+                    </li>
+                    <li>
+                        <button className='btn' onClick={LogOut}>Logout</button>
                     </li>
 
                 </ul>
