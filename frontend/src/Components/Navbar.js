@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from "react-router-dom";
 const Navbar = () => {
     return (
         <div><nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -26,11 +26,14 @@ const Navbar = () => {
                             <a className="dropdown-item" href="#">Something else here</a>
                         </div>
                     </li>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                         <a className="nav-link disabled" href="#">Disabled</a>
+                    </li> */}
+                    <li className="nav-item active">
+                        <Link className="nav-link float-right" to="SignIn">SignIn <span className="sr-only">(current)</span></Link>
                     </li>
                     <li className="nav-item active">
-                        <a className="nav-link float-right" href="#">SignIn <span className="sr-only">(current)</span></a>
+                        <Link className="nav-link float-right" to="SignUp">SignUp <span className="sr-only">(current)</span></Link>
                     </li>
                 </ul>
                 {/* <form className="form-inline my-2 my-lg-0">

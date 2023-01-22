@@ -1,7 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Icon from 'react-bootstrap-icons';
 
 const SignIn = () => {
+    const [Error, SetError] = useState("start")
+
+
+    // fetch('http://localhost:100/SignIn')
+    //     .then(res => res.json())
+    //     .then(data => (SetError(data)))
+    //     .then(console.log(Error))
+
+
+
+
     const [Email, SetEmail] = useState("")
     const [Password, SetPassword] = useState("")
 
@@ -21,9 +32,10 @@ const SignIn = () => {
             SetPassword(e.target.value)
         }
     }
-    const posttoexpress = (e) => {
+
+    const posttoexpress = async (e) => {
         e.preventDefault();
-        fetch('http://localhost:100/SignIn', {
+        let res = await fetch('http://localhost:100/SignIn', {
             method: 'POST',
             body: JSON.stringify({
                 "Email": Email,
@@ -33,14 +45,19 @@ const SignIn = () => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
         })
-            .then((res) => res.json())
-            .then((post) => {
-                SetEmail('');
-                SetPassword('')
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
+        let response = await res.json()
+        SetError(response.error)
+        console.log(Error)
+            // .then((res) => res.json())
+            // (data => (SetError(data.error)
+            // .then(console.log(Error))
+            // .then(() => {
+            //     SetEmail('');
+            //     SetPassword('');
+            // })
+            // .catch((err) => {
+            //     console.log(err.message);
+            // });
 
     }
     return (
@@ -114,7 +131,7 @@ const SignIn = () => {
                                                 <button type="button" className="btn btn-link btn-floating mx-1">
                                                     <i className="fab fa-twitter" />
                                                 </button>
-                                                <button  type="button" className="btn btn-link btn-floating mx-1">
+                                                <button type="button" className="btn btn-link btn-floating mx-1">
                                                     <i className="fab fa-github" />
                                                 </button>
                                             </div>

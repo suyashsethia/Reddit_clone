@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 const SignUp = () => {
-    const [Fname, SetFname] = useState('')
-    const [Lname, SetLname] = useState('')
+    const [FirstName, SetFirstName] = useState('')
+    const [LastName, SetLastName] = useState('')
     const [Age, SetAge] = useState(0)
     const [UserName, SetUSerName] = useState('')
     const [Password, SetPassword] = useState('')
@@ -12,8 +12,8 @@ const SignUp = () => {
     const change = (e) => {
 
 
-        if (e.target.id === 'SignUpFname') {
-            SetFname(e.target.value)
+        if (e.target.id === 'SignUpFirstName') {
+            SetFirstName(e.target.value)
         }
         else if (e.target.id === 'SignUpAge') {
             SetAge(e.target.value)
@@ -26,17 +26,18 @@ const SignUp = () => {
             SetEmail(e.target.value)
         } else if (e.target.id === 'SignUpPhoneNumber') {
             SetPhoneNumber(e.target.value)
-        } else if (e.target.id === 'SignUpLname') {
-            SetLname(e.target.value)
+        } else if (e.target.id === 'SignUpLastName') {
+            SetLastName(e.target.value)
         }
     }
+  
     const posttoexpress = (e) => {
         e.preventDefault();
         fetch('http://localhost:100/SignUp', {
             method: 'POST',
             body: JSON.stringify({
-                "FirstName": Fname,
-                "LastName": Lname,
+                "FirstName": FirstName,
+                "LastName": LastName,
                 "Age": Age,
                 "Password": Password,
                 "UserName": UserName,
@@ -49,8 +50,8 @@ const SignUp = () => {
         })
             .then((res) => res.json())
             .then((post) => {
-                SetFname('');
-                SetLname('');
+                SetFirstName('');
+                SetLastName('');
                 SetUSerName('')
                 SetAge(0);
                 SetEmail('');
@@ -62,7 +63,7 @@ const SignUp = () => {
             });
     }
     return (
-        <div>
+        <div className='w-full'>
             <section className="vh-100 gradient-custom">
                 <div className="container py-5 h-100">
                     <div className="row justify-content-center align-items-center h-100">
@@ -74,13 +75,13 @@ const SignUp = () => {
                                         <div className="row">
                                             <div className="col-md-6 mb-4">
                                                 <div className="form-outline">
-                                                    <input type="text" onChange={change} id="SignUpFname" value={Fname} className="form-control form-control-lg" />
+                                                    <input type="text" onChange={change} id="SignUpFirstName" value={FirstName} className="form-control form-control-lg" />
                                                     <label className="form-label" htmlFor="firstName">First Name</label>
                                                 </div>
                                             </div>
                                             <div className="col-md-6 mb-4 ">
                                                 <div className="form-outline">
-                                                    <input type="text" onChange={change} id="SignUpLname" value={Lname} className="form-control form-control-lg" />
+                                                    <input type="text" onChange={change} id="SignUpLastName" value={LastName} className="form-control form-control-lg" />
                                                     <label className="form-label" htmlFor="lastName">Last Name</label>
                                                 </div>
                                             </div>

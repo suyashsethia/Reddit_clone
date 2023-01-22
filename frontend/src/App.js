@@ -10,12 +10,12 @@ function App() {
     <Router>
       <div>
         <Navbar></Navbar>
-        <div className="container mt-2">
+        <div className="">
           <Routes>
 
-            <Route exact path="/signin" element={<SignIn></SignIn>}>
+            <Route exact path="/SignIn" element={<SignIn></SignIn>}>
             </Route>
-            <Route exact path="/signup" element={<SignUp></SignUp>}>
+            <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route>
           </Routes>
         </div>
