@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Switch, Route, Link, useLocation } fro
 import ProfilePage from './Components/ProfilePage';
 import Home from './Components/Home';
 // import BrowserRouter from 'react-rou'
+import Auth from './Components/Auth';
 function App() {
   return (
     <Router>
@@ -18,10 +19,10 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home></Home>}>
             </Route>
-            <Route exact path="/SignIn" element={<SignIn></SignIn>}>
+            <Route path="/SignIn" element={<Auth></Auth>}>
             </Route>
-            <Route exact path="/SignUp" element={<SignUp></SignUp>}>
-            </Route>
+            {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
+            </Route> */}
             <Route exact path="/ProfilePage" element={<ProfilePage></ProfilePage>}></Route>
           </Routes>
         </div>

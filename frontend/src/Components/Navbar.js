@@ -1,17 +1,26 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 // import { redirect } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+
 const Navbar = () => {
+    let user = localStorage.getItem('UserData')
+    let navigate = useNavigate();
     const LogOut = () => {
-
         localStorage.removeItem('UserData');
-        <Navigate to="SignIn"></Navigate>
+        navigate({
+            pathname: '/SignIn',
+            search: '?signin',
+        })
     }
+    const func = () => {
 
+    }
     return (
         <div><nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <a className="navbar-brand" href="#">Navbar</a>
+            <Link className="navbar-brand" to="/">Navbar</Link>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon" />
             </button>
@@ -22,7 +31,7 @@ const Navbar = () => {
 
                         {/* <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a> */}
                     </li>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                         <a className="nav-link" href="#">Link</a>
                     </li>
                     <li className="nav-item dropdown">
@@ -35,20 +44,21 @@ const Navbar = () => {
                             <div className="dropdown-divider" />
                             <a className="dropdown-item" href="#">Something else here</a>
                         </div>
-                    </li>
+                    </li> */}
                     {/* <li className="nav-item">
                         <a className="nav-link disabled" href="#">Disabled</a>
                     </li> */}
                     <li className="nav-item active">
-                        <Link className="nav-link float-right" to="SignIn">SignIn <span className="sr-only">(current)</span></Link>
+                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }}to="/SignIn?signin">SignIn <span className="sr-only">(current)</span></Link>
                     </li>
                     <li className="nav-item active">
-                        <Link className="nav-link float-right" to="SignUp">SignUp <span className="sr-only">(current)</span></Link>
+                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }}to='/SignIn?signup' >SignUp <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li className="nav-item active">
+
+                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="ProfilePage"> Profile <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li>
+                    <li style={{ display: user ? 'block' : 'none' }}>
                         <button className='btn' onClick={LogOut}>Logout</button>
                     </li>
 
@@ -61,8 +71,8 @@ const Navbar = () => {
                    </div>
                 </form> */}
             </div>
-        </nav>
-        </div>
+        </nav >
+        </div >
     )
 }
 

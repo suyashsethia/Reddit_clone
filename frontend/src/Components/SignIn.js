@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import * as Icon from 'react-bootstrap-icons';
+// import Alert from './BasicAlert';/
+import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
-    const [Error, SetError] = useState("start")
-
-
-    // fetch('http://localhost:100/SignIn')
-    //     .then(res => res.json())
-    //     .then(data => (SetError(data)))
-    //     .then(console.log(Error))
-
-
-
-
+    
+    let navigate = useNavigate()
+    // const [Error, SetError] = useState("start")
     const [Email, SetEmail] = useState("")
     const [Password, SetPassword] = useState("")
-
+    const ref = React.useRef(null)
     const log = () => {
         // console.log(this.state)
         console.log(Email)
         console.log(Password)
     }
+
 
     const change = (e) => {
 
@@ -48,22 +44,15 @@ const SignIn = () => {
         let response = await res.json()
         // SetError(response.error)
         // console.log(Error)
+        let error = response.error
         console.log(response.error)
         console.log(response.User_data)
 
-        // .then((res) => res.json())
-        // (data => (SetError(data.error)
-        // .then(console.log(Error))
-        // .then(() => {
-        //     SetEmail('');
-        //     SetPassword('');
-        // })
-        // .catch((err) => {
-        //     console.log(err.message);
-        // });
         if (response.error === "Correct Login id") {
             localStorage.setItem("UserData", JSON.stringify(response.User_data))
+            navigate("/ProfilePage")
         }
+
         SetEmail('');
         SetPassword('');
 
@@ -97,36 +86,42 @@ const SignIn = () => {
                                                     {/* <div className="form-outline">
                                                         <input type="text" id="form3Example1" className="form-control" />
                                                         <label className="form-label" htmlFor="form3Example1">First name</label>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-6 mb-4">
-                                                    <div className="form-outline">
+                                                        </div>
+                                                        </div>
+                                                        <div className="col-md-6 mb-4">
+                                                        <div className="form-outline">
                                                         <input type="text" id="form3Example2" className="form-control" />
                                                         <label className="form-label" htmlFor="form3Example2">Last name</label>
                                                     </div> */}
                                                 </div>
                                             </div>
                                             {/* Email input */}
-                                            <div className="form-outline mb-4">
+                                            <div className="text-center form-outline mb-4">
                                                 <input onChange={change} value={Email} type="email" id="SignInEmail" className="form-control" />
                                                 <label className="form-label" id="a" htmlFor="form3Example3 inputEmail4">Email address</label>
                                             </div>
                                             {/* Password input */}
-                                            <div className="form-outline mb-4">
+                                            <div className="text-center form-outline mb-4">
                                                 <input value={Password} onChange={change} type="password" id="SignInPassword" className="form-control" />
                                                 <label className="form-label" htmlFor="form3Example4">Password</label>
                                             </div>
                                             {/* Checkbox */}
-                                            <div className="form-check d-flex justify-content-center mb-4">
+                                            {/* <div className="form-check d-flex justify-content-center mb-4">
                                                 <input className="form-check-input me-2" type="checkbox" defaultValue id="form2Example33" defaultChecked />
                                                 <label className="form-check-label" htmlFor="form2Example33">
-                                                    Remember Me
+                                                Remember Me
                                                 </label>
+                                            </div> */}
+                                            {/* div for alert  */}
+                                            <div ref={ref}>
+
                                             </div>
                                             {/* Submit button */}
-                                            <button onClick={posttoexpress} type="submit" className="btn btn-primary btn-block mb-4">
-                                                Sign in
-                                            </button>
+                                            <div className="text-center">
+                                                <button onClick={posttoexpress} type="submit" className=".justify-content-center .text-center btn btn-primary btn-block mb-4">
+                                                    Sign in
+                                                </button>
+                                            </div>
                                             {/* Register buttons */}
                                             <div className="text-center">
                                                 <p>or sign  with:</p>
@@ -143,6 +138,11 @@ const SignIn = () => {
                                                     <i className="fab fa-github" />
                                                 </button>
                                             </div>
+                                            <div className="text-center">
+
+                                            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/SignIn?signup"
+                                                class="link-danger">SignUp</Link></p>
+                                                </div>
                                         </form>
                                     </div>
                                 </div>
