@@ -15,52 +15,54 @@ con.on('open', function () {
 })
 
 //mongo continue , making a schema for mongo 
-// const nameSchema = new mongoose.Schema({
-//     Lname: {
-//         type: String,
-//         required: true,
-
-//     },
-//     Age: {
-//         type: Number,
-//         required: true,
-
-//     },
-//     Password: {
-//         type: String,
-//         required: true,
-
-//     },
-//     FirstName: {
-//         type: String,
-//         required: true,
-
-//     },
-//     UserName: {
-//         type: String,
-//         required: true,
-
-//     },
-//     Email: {
-//         type: String,
-//         required: true,
-
-//     },
-//     PhoneNumber: {
-//         type: Number,
-//         required: true,
-
-//     },
-// });
 const nameSchema = new mongoose.Schema({
-    FirstName: String,
-    LastName: String,
-    Age: Number,
-    Password: String,
-    UserName: String,
-    Email: String,
-    PhoneNumber: Number
+    Lname: {
+        type: String,
+        required: true,
+
+    },
+    Age: {
+        type: Number,
+        required: true,
+
+    },
+    Password: {
+        type: String,
+        required: true,
+
+    },
+    FirstName: {
+        type: String,
+        required: true,
+
+    },
+    UserName: {
+        type: String,
+        required: true,
+        unique: true,
+
+    },
+    Email: {
+        type: String,
+        required: true,
+        unique: true,
+
+    },
+    PhoneNumber: {
+        type: Number,
+        required: true,
+
+    },
 });
+// const nameSchema = new mongoose.Schema({
+//     FirstName: String,
+//     LastName: String,
+//     Age: Number,
+//     Password: String,
+//     UserName: String,
+//     Email: String,
+//     PhoneNumber: Number
+// });
 
 const User = mongoose.model('SignUpForm', nameSchema)
 // nameSchema.index({ Email: 1, PhoneNumber: 1, UserName: 1 }, { unique: true });
@@ -114,7 +116,7 @@ app.post('/SignIn', async function (req, res) {
     console.log(error_message_to_React);
     res.json({
         error: error_message_to_React,
-        User_data:data
+        User_data: data
     })
 })
 

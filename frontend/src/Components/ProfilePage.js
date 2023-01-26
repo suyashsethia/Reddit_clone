@@ -1,20 +1,42 @@
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import withAuth from './withAuth';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams,
+    useMatch, useNavigate
+} from "react-router-dom";
+import SignIn from './SignIn';
+// import { Link } from 'react-router-dom';
+
 
 const ProfilePage = () => {
+    let navigate = useNavigate();
+    const func = (e) => {
+        if (e.target.id === 'Followers') {
+            navigate('/ProfilePage/Followers')
+        }
+        else if (e.target.id === 'Following') {
+            navigate('/ProfilePage/Following')
+        }
+    }
     const [User_data, SetUser_data] = useState({})
 
-useEffect (()=>{
+    useEffect(() => {
 
-    let string_saved_in_local_storage = localStorage.getItem('UserData')
-    console.log(string_saved_in_local_storage)
+        let string_saved_in_local_storage = localStorage.getItem('UserData')
+        console.log(string_saved_in_local_storage)
 
-    SetUser_data(JSON.parse(string_saved_in_local_storage))
-    console.log(User_data)
-    // const { User_Name } = useParams();
-}) 
+        SetUser_data(JSON.parse(string_saved_in_local_storage))
+        console.log(User_data)
+        // const { User_Name } = useParams();
+    })
+    // let { path, url } = useMatch();
+    let followers = 10;
     return (
         <div className='w-full'><section style={{ backgroundColor: '#eee' }}>
             <div className="container py-5">
@@ -40,8 +62,8 @@ useEffect (()=>{
                                 <p className="text-muted mb-1">Full Stack Developer</p>
                                 <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                 <div className="d-flex justify-content-center mb-2">
-                                    <button type="button" className="btn btn-primary">Follow</button>
-                                    <button type="button" className="btn btn-outline-primary ms-1">Message</button>
+                                    <button type="button" className="btn btn-info">Follow</button>
+                                    <button type="button" className="btn btn-outline-info ms-1">Message</button>
                                 </div>
                             </div>
                         </div>
@@ -120,6 +142,10 @@ useEffect (()=>{
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className='my-3'>
+                            <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {followers}</button>
+                            <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {followers}</button>
                         </div>
                         <div className="row">
                             <div className="col-md-6">

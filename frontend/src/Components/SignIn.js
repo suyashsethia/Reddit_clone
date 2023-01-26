@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
-    
+
     let navigate = useNavigate()
     // const [Error, SetError] = useState("start")
     const [Email, SetEmail] = useState("")
@@ -30,32 +30,48 @@ const SignIn = () => {
     }
 
     const posttoexpress = async (e) => {
-        e.preventDefault();
-        let res = await fetch('http://localhost:100/SignIn', {
-            method: 'POST',
-            body: JSON.stringify({
-                "Email": Email,
-                "Password": Password
-            }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        let response = await res.json()
-        // SetError(response.error)
-        // console.log(Error)
-        let error = response.error
-        console.log(response.error)
-        console.log(response.User_data)
-
-        if (response.error === "Correct Login id") {
-            localStorage.setItem("UserData", JSON.stringify(response.User_data))
-            navigate("/ProfilePage")
+        if ((Password === '') || (Email === '')) {
+            alert("fill all fields")
         }
+        else {
 
-        SetEmail('');
-        SetPassword('');
+            e.preventDefault();
+            let res = await fetch('http://localhost:100/SignIn', {
+                method: 'POST',
+                body: JSON.stringify({
+                    "Email": Email,
+                    "Password": Password
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            })
+            let response = await res.json()
+            // SetError(response.error)
+            // console.log(Error)
+            let error = response.error
+            console.log(response.error)
+            console.log(response.User_data)
 
+            if (response.error === "Correct Login id") {
+                
+                
+                localStorage.setItem("UserData", JSON.stringify(response.User_data))
+                
+                
+                
+                alert("correct")
+                setInterval(navigate("/ProfilePage"), 1000)
+
+            }
+            else {
+                alert(response.error)
+            }
+
+            SetEmail('');
+            SetPassword('');
+
+        }
     }
     return (
         <div>
@@ -97,12 +113,12 @@ const SignIn = () => {
                                             </div>
                                             {/* Email input */}
                                             <div className="text-center form-outline mb-4">
-                                                <input onChange={change} value={Email} type="email" id="SignInEmail" className="form-control" />
+                                                <input onChange={change} value={Email} type="email" id="SignInEmail" className="form-control" required />
                                                 <label className="form-label" id="a" htmlFor="form3Example3 inputEmail4">Email address</label>
                                             </div>
                                             {/* Password input */}
                                             <div className="text-center form-outline mb-4">
-                                                <input value={Password} onChange={change} type="password" id="SignInPassword" className="form-control" />
+                                                <input value={Password} onChange={change} type="password" id="SignInPassword" className="form-control" required />
                                                 <label className="form-label" htmlFor="form3Example4">Password</label>
                                             </div>
                                             {/* Checkbox */}
@@ -140,9 +156,9 @@ const SignIn = () => {
                                             </div>
                                             <div className="text-center">
 
-                                            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/SignIn?signup"
-                                                class="link-danger">SignUp</Link></p>
-                                                </div>
+                                                <p className="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <Link to="/SignIn?signup"
+                                                    className="link-danger">SignUp</Link></p>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
