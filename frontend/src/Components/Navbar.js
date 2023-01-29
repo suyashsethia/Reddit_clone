@@ -47,10 +47,10 @@ const Navbar = () => {
                         <a className="nav-link disabled" href="#">Disabled</a>
                     </li> */}
                     <li className="nav-item active">
-                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }}to="/SignIn?signin">SignIn <span className="sr-only">(current)</span></Link>
+                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }} to="/SignIn?signin">SignIn <span className="sr-only">(current)</span></Link>
                     </li>
                     <li className="nav-item active">
-                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }}to='/SignIn?signup' >SignUp <span className="sr-only">(current)</span></Link>
+                        <Link className="nav-link float-right" style={{ display: user ? 'none' : 'block' }} to='/SignIn?signup' >SignUp <span className="sr-only">(current)</span></Link>
                     </li>
 
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
@@ -58,6 +58,13 @@ const Navbar = () => {
                     </li>
                     <li style={{ display: user ? 'block' : 'none' }}>
                         <button className='btn' onClick={LogOut}>Logout</button>
+                    </li>
+                    <li style={{ display: user ? 'block' : 'none' }}>
+                        <button className='btn' onClick={function (){
+                            console.log('hello')
+                            navigate(
+                            '/AllUsers')
+                        }} >AllUsers</button>
                     </li>
 
                 </ul>

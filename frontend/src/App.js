@@ -10,7 +10,12 @@ import Home from './Components/Home';
 // import BrowserRouter from 'react-rou'
 import Auth from './Components/Auth';
 import Followers from './Components/Followers';
+import AllUsers from './Components/AllUsers';
 // import useAuth from './Components/useAuth';
+// AllUsers
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
   return (
@@ -27,6 +32,8 @@ function App() {
             <Route path="/ProfilePage/Followers" element={<Followers></Followers>}>
             </Route>
             <Route path="/ProfilePage/Following" element={<Followers></Followers>}>
+            </Route>
+            <Route path="/AllUsers" element={<AllUsers></AllUsers>}>
             </Route>
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}

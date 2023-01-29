@@ -3,7 +3,8 @@ import * as Icon from 'react-bootstrap-icons';
 // import Alert from './BasicAlert';/
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const SignIn = () => {
 
     let navigate = useNavigate()
@@ -31,7 +32,10 @@ const SignIn = () => {
 
     const posttoexpress = async (e) => {
         if ((Password === '') || (Email === '')) {
-            alert("fill all fields")
+            const notify = () => toast.error("Fill all fields")
+            // toast.error("Fill all fields")
+            // alert("fill all fields")
+            notify()
         }
         else {
 
@@ -49,25 +53,36 @@ const SignIn = () => {
             let response = await res.json()
             // SetError(response.error)
             // console.log(Error)
-            let error = response.error
+            // let error = response.error
             console.log(response.error)
             console.log(response.User_data)
 
             if (response.error === "Correct Login id") {
-                
-                
+
+
                 localStorage.setItem("UserData", JSON.stringify(response.User_data))
-                
-                
-                
-                alert("correct")
-                setInterval(navigate("/ProfilePage"), 1000)
+
+
+
+                // alert("correct")
+
+
+                // <ToastContainer>
+                //     toast.success("Correct Login id")
+                // </ToastContainer>
+                toast.success("Correct Login id")
+                setInterval(navigate("/ProfilePage"), 2000)
 
             }
             else {
-                alert(response.error)
+                toast.error(response.error)
+                // const notify = () => toast.error(response.error)
+                // notify()
+                // alert(response.error)
             }
 
+            // toast("WOW")
+            {/* Same as */ }
             SetEmail('');
             SetPassword('');
 
@@ -75,7 +90,20 @@ const SignIn = () => {
     }
     return (
         <div>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
             <section className>
+
                 {/* Jumbotron */}
                 <div className="px-4 py-5 px-md-5 text-center text-lg-start" style={{ backgroundColor: 'hsl(0, 0%, 96%)' }}>
                     <div className="container">
