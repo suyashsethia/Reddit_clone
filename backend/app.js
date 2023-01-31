@@ -46,45 +46,30 @@ const nameSchema = new mongoose.Schema({
     Email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
 
     },
     PhoneNumber: {
         type: Number,
-        required: true
+        required: true,
 
     },
-    // FollowersNumber: {
-    //     type: Number,
-    //     default: 0,
-    //     required: true
+    Followers: {
+        type: [{
+            FollowerUserName: { type: String },
+        }],
+        // unique: false,
+        sparse: true
+    },
+    Following: {
+        type: [{
+            FollowingUserName: { type: String },
+        }],
+        // unique: false,
+        sparse: true
+    }
 
-
-    // },
-    // FollowingNumber: {
-    //     type: Number,
-    //     default: 0,
-    //     required: true
-    // },
-    Followers: [{
-        type: String,
-        // unique: true
-    }],
-    Following: [{
-        type: String,
-        // unique: true
-
-    }]
 });
-// const nameSchema = new mongoose.Schema({
-//     FirstName: String,
-//     LastName: String,
-//     Age: Number,
-//     Password: String,
-//     UserName: String,
-//     Email: String,
-//     PhoneNumber: Number
-// });
 
 const User = mongoose.model('SignUpForm', nameSchema)
 // nameSchema.index({ Email: 1, PhoneNumber: 1, UserName: 1 }, { unique: true });
@@ -99,17 +84,29 @@ app.set('views', path.join(__dirname, 'views'))
 //for saving website data into computer
 app.use(express.urlencoded())
 
-//set local host page
-app.get("/", (req, res) => {
 
-    res.send('aagya laude')
-});
-
-app.post('/SignUp', function (req, res) {
+app.post('/SignUp', async function (req, res) {
     console.log(req.body)
-    var myData = new User(req.body);
+    var password = req.body.Password;
+
+    // encrypt password
+    // var salt = await bcrypt.genSaltSync(10);
+    // var encryptedpassword = await bcrypt.hashSync(password, salt);
+
+    var data = {
+        "FirstName": req.body.FirstName,
+        "LastName": req.body.LastName,
+        "UserName": req.body.UserName,
+        "Email": req.body.Email,
+        "PhoneNumber": req.body.PhoneNumber,
+        "Age": req.body.Age,
+        "Password": req.body.Password,
+        "Followers": [],
+        "Following": [],
+    }
+    var myData = new User(data);
     myData.save().then(() => {
-        console.log("hogya save Database me")
+        console.log("hogya sparse: true save Database me")
         // res.send("item saved to database");
     })
         .catch(err => {
@@ -129,21 +126,25 @@ app.post('/AllUsers', async function (req, res) {
     res.json({
         AllUsers: datas
     })
-    console.log(datas)
+    // console.log(datas)
 })
 
 //getting followers data from react 
 app.post('/Follow', async function (req, res) {
     console.log(req.body)
-    const User1 = await User.findOne({ UserName: req.body.UserNameTofollow })
+    const User1 = await User.find({ UserName: req.body.UserNameTofollow })
 
     // const current_followers = User1.FollowersNumber
-    const User2 = await User.findOne({ UserName: req.body.UserNameOfLogin })
+    const User2 = await User.find({ UserName: req.body.UserNameOfLogin })
     // const current_following = User2.FollowingNumber
     // console.log(current_followers, current_following)
-    const response1 = await User.updateOne({ UserName: req.body.UserNameTofollow }, { $push: { Followers: req.body.UserNameOfLogin } })
-    const response2 = await User.updateOne({ UserName: req.body.UserNameOfLogin }, { $push: { Following: req.body.UserNameTofollow } })
-    console.log(response1 , response2)
+    // const response1 = await User.updateOne({ UserName: req.body.UserNameTofollow }, { $push: { Followers: req.body.UserNameOfLogin } })
+    // const response2 = await User.updateOne({ UserName: req.body.UserNameOfLogin }, { $push: { Following: req.body.UserNameTofollow } })
+
+    let response1 = User1[0].Followers.push({ FollowingUserName: req.body.UserNameOfLogin })
+    let response2 = User2[0].Following.push({ FollowerUserName: req.body.UserNameTofollow })
+    console.log(response1, response2)
+    console.log(User1[0].Followers[0].FollowerUserName, User2[0].Following)
 });
 
 app.post('/SignIn', async function (req, res) {

@@ -52,9 +52,6 @@ const AllUsers = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-
-
-
             })
     }
 
