@@ -13,8 +13,11 @@ import Followers from './Components/Followers';
 import AllUsers from './Components/AllUsers';
 // import useAuth from './Components/useAuth';
 // AllUsers
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Following from './Components/Following';
+import MySubgredit from './Components/MySubgredit';
 
 
 function App() {
@@ -31,7 +34,7 @@ function App() {
             </Route>
             <Route path="/ProfilePage/Followers" element={<Followers></Followers>}>
             </Route>
-            <Route path="/ProfilePage/Following" element={<Followers></Followers>}>
+            <Route path="/ProfilePage/Following" element={<Following></Following>}>
             </Route>
             <Route path="/AllUsers" element={<AllUsers></AllUsers>}>
             </Route>
@@ -39,6 +42,8 @@ function App() {
             </Route> */}
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
           </Routes>
+          <Route path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
+          
         </div>
       </div>
     </Router>

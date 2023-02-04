@@ -9,7 +9,7 @@ const { chownSync } = require("fs");
 const { userInfo } = require("os");
 const con = mongoose.connection
 const url = "mongodb+srv://suyash:suyash2303@cluster0.rhhwane.mongodb.net/test"
-
+mongoose.set('strictQuery', true);
 mongoose.connect(url, { useNewUrlParser: true });
 con.on('open', function () {
     console.log("connected...")
@@ -54,16 +54,27 @@ const nameSchema = new mongoose.Schema({
         required: true,
 
     },
+    // Followers: [Object],
+
+    // Following: [Object],
     Followers: {
         type: [{
-            FollowerUserName: { type: String },
+            FollowersUserName: String,
+            FollowersFirstName: String,
+            FollowersLastName: String,
+            FollowersEmail: String,
         }],
         // unique: false,
         sparse: true
     },
+
+
     Following: {
         type: [{
-            FollowingUserName: { type: String },
+            FollowingUserName: String,
+            FollowingFirstName: String,
+            FollowingLastName: String,
+            FollowingEmail: String,
         }],
         // unique: false,
         sparse: true
@@ -86,7 +97,7 @@ app.use(express.urlencoded())
 
 
 app.post('/SignUp', async function (req, res) {
-    console.log(req.body)
+    // console.log(req.body)
     var password = req.body.Password;
 
     // encrypt password
@@ -106,7 +117,7 @@ app.post('/SignUp', async function (req, res) {
     }
     var myData = new User(data);
     myData.save().then(() => {
-        console.log("hogya sparse: true save Database me")
+        console.log("hogya save Database me")
         // res.send("item saved to database");
     })
         .catch(err => {
@@ -116,11 +127,6 @@ app.post('/SignUp', async function (req, res) {
 })
 let error_message_to_React = ""
 
-// const AllUsers = async () => {
-//     const data = await User.collection.distint('UserName').toArray()
-//     return data
-// }
-
 app.post('/AllUsers', async function (req, res) {
     const datas = await User.find({ field: "UserName" })
     res.json({
@@ -129,29 +135,93 @@ app.post('/AllUsers', async function (req, res) {
     // console.log(datas)
 })
 
-//getting followers data from react 
-app.post('/Follow', async function (req, res) {
-    console.log(req.body)
-    const User1 = await User.find({ UserName: req.body.UserNameTofollow })
+//getting followers data from react
+app.post('/api/Follow', async (req, res) => {
+    // console.log(req.body)
+    const UserToFollow = await User.find({ UserName: req.body.UserNameTofollow })
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    // console.log(UserToFollow[0], UserOfLogin[0])
 
-    // const current_followers = User1.FollowersNumber
-    const User2 = await User.find({ UserName: req.body.UserNameOfLogin })
-    // const current_following = User2.FollowingNumber
-    // console.log(current_followers, current_following)
-    // const response1 = await User.updateOne({ UserName: req.body.UserNameTofollow }, { $push: { Followers: req.body.UserNameOfLogin } })
-    // const response2 = await User.updateOne({ UserName: req.body.UserNameOfLogin }, { $push: { Following: req.body.UserNameTofollow } })
+    UserOfLogin[0].Following.push({
+        FollowingUserName: UserToFollow[0].UserName,
+        FollowingFirstName: UserToFollow[0].FirstName,
+        FollowingLastName: UserToFollow[0].LastName,
+        FollowingEmail: UserToFollow[0].Email,
+    })
 
-    let response1 = User1[0].Followers.push({ FollowingUserName: req.body.UserNameOfLogin })
-    let response2 = User2[0].Following.push({ FollowerUserName: req.body.UserNameTofollow })
-    console.log(response1, response2)
-    console.log(User1[0].Followers[0].FollowerUserName, User2[0].Following)
+    UserToFollow[0].Followers.push({
+        FollowersUserName: UserOfLogin[0].UserName,
+        FollowersFirstName: UserOfLogin[0].FirstName,
+        FollowersLastName: UserOfLogin[0].LastName,
+        FollowersEmail: UserOfLogin[0].Email,
+    })
+    // console.log(UserToFollow[0], UserOfLogin[0])
+    await UserToFollow[0].save();
+    await UserOfLogin[0].save();
+    // console.log(UserToFollow[0], UserOfLogin[0])
+
+    res.status(200).json({ success: true })
+    // console.log(response1, response2)
+    // console.log(UserOfLogin[0].Following[0].FollowingUserName, UserToFollow[0].Followers[0].FollowerUserName)
 });
 
+//get followers of login user
+app.post('/api/FollowersOfLogin', async (req, res) => {
+    // console.log(req.body)
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    res.json({
+        Follower_Of_Login: UserOfLogin[0].Followers
+    })
+})
+//get following  of login user
+app.post('/api/FollowingOfLogin', async (req, res) => {
+    // console.log(req.body)
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    res.json({
+        Following_Of_Login: UserOfLogin[0].Following
+    })
+})
+
+// unfollow user
+app.post('/api/UnFollow', async (req, res) => {
+    // console.log(req.body)
+    const UserToUnFollow = await User.find({ UserName: req.body.UserNameToUnFollow })
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    // console.log(UserToUnFollow[0], UserOfLogin[0])
+
+    UserOfLogin[0].Following.pull({
+        FollowingUserName: UserToUnFollow[0].UserName,
+    })
+    UserToUnFollow[0].Followers.pull({
+        FollowersUserName: UserOfLogin[0].UserName,
+
+    })
+    await UserToUnFollow[0].save();
+    await UserOfLogin[0].save();
+    res.status(200).json({ success: true })
+})
+app.post('/api/RemoveFollower', async (req, res) => {
+    // console.log(req.body)
+    const UserToRemoveFollower = await User.find({ UserName: req.body.UserNameToRemovefollower })
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    console.log(UserToRemoveFollower[0].UserName, UserOfLogin[0].UserName)
+    // console.log(UserOfLogin[0].Followers)
+    UserOfLogin[0].Followers.pull({
+        FollowersUserName: UserToRemoveFollower[0].UserName,
+    })
+    UserToRemoveFollower[0].Following.pull({
+        FollowingUserName: UserOfLogin[0].UserName,
+
+    })
+    await UserToRemoveFollower[0].save();
+    await UserOfLogin[0].save();
+    res.status(200).json({ success: true })
+})
 app.post('/SignIn', async function (req, res) {
-    console.log(req.body)
+    // console.log(req.body)
     const data = await User.findOne({ Email: req.body.Email })
 
-    console.log(data)
+    // console.log(data)
     if (data) {
         if (data.Password === req.body.Password) {
             error_message_to_React = "Correct Login id"
@@ -161,17 +231,51 @@ app.post('/SignIn', async function (req, res) {
         }
     }
     else {
-        console.log("nahi hai email")
+        // console.log("nahi hai email")
         error_message_to_React = "Mail id Not Found Sign Up First"
     }
-    console.log(error_message_to_React);
+    // console.log(error_message_to_React);
     res.json({
         error: error_message_to_React,
         User_data: data
     })
-    // console.log(data)
-    // console.log("hahahaha")
+})
 
+
+//SUB GREDDIT WORK BEGINS HERE
+
+
+
+const greditnameschema = new mongoose.Schema({
+    GreditName: String,
+    GreditDescription: String,
+    GreditCreatorEmail: String,
+    GreditCreatorUserName: String,
+    GreditTags: [],
+    GreditPosts: [],
+    GreditFollowers: [],
+    GreditBannedwords: [],
+})
+
+
+const SubGredit = mongoose.model("SubGredit", greditnameschema)
+
+
+app.post('/api/CreateSubGredit', async (req, res) => {
+    // console.log(req.body)
+
+    var newSubGredit = new SubGredit({
+        GreditName: req.body.GreditName,
+        GreditDescription: req.body.GreditDescription,
+        GreditCreatorEmail: req.body.GreditCreatorEmail,
+        GreditCreatorUserName: req.body.GreditCreatorUserName,
+        GreditTags: req.body.GreditTags,
+        GreditPosts: [],
+        GreditFollowers: [],
+        GreditBannedwords: [],
+    })
+    newSubGredit.save();
+    res.status(200).json({ success: true })
 })
 
 app.listen(port, () => {

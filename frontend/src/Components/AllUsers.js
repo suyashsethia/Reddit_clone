@@ -39,10 +39,10 @@ const AllUsers = () => {
     // console.log(`apna waala`, Users)
 
     const Follow = key => async (e) => {
-        console.log(JSON.parse(localStorage.getItem('UserData')).UserName)
-        console.log(key)
+        // console.log(JSON.parse(localStorage.getItem('UserData')).UserName)
+        // console.log(key)
         e.preventDefault()
-        let res = await fetch('http://localhost:100/Follow',
+        let res = await fetch('http://localhost:100/api/Follow',
             {
                 method: "POST",
                 body: JSON.stringify({
@@ -53,17 +53,21 @@ const AllUsers = () => {
                     "Content-Type": "application/json"
                 },
             })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            alert('Followed')
+            e.target.style.display = 'none'
+        }
     }
-
-    // console.log('ewewr1',y)
-
+    let userName_local = JSON.parse(localStorage.getItem('UserData')).UserName
     return (
         <div>
             {/* <button>naam hai button</button> */}
-
             <div>
+
                 {Users.map(({ UserName }) => (
-                    <div key={UserName} className=" my-3 card w-75">
+                    <div key={UserName} style={{ display: (userName_local === UserName) ? 'none' : 'block' }} className=" my-3 card w-75">
                         <div className="card-body my-3">
                             <h5 className="card-title">{UserName}</h5>
                             <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
