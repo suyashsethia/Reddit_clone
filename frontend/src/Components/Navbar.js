@@ -1,11 +1,11 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 // import { redirect } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import { Route } from 'react-router-dom';
-
 const Navbar = () => {
+    let location = useLocation()
     let user = localStorage.getItem('UserData')
     let navigate = useNavigate();
     const LogOut = () => {
@@ -56,15 +56,21 @@ const Navbar = () => {
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="ProfilePage"> Profile <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li style={{ display: user ? 'block' : 'none' }}>
-                        <button className='btn' onClick={LogOut}>Logout</button>
+                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to="ProfilePage/MySubGredit"> Mygredits <span className="sr-only">(current)</span></Link>
+                    </li>
+                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to="AllGredits"> AllGredits <span className="sr-only">(current)</span></Link>
                     </li>
                     <li style={{ display: user ? 'block' : 'none' }}>
-                        <button className='btn' onClick={function (){
+                        <button className='btn' onClick={function () {
                             console.log('hello')
                             navigate(
-                            '/AllUsers')
+                                '/AllUsers')
                         }} >AllUsers</button>
+                    </li>
+                    <li style={{ display: user ? 'block' : 'none' }}>
+                        <button className='btn' onClick={LogOut}>Logout</button>
                     </li>
 
                 </ul>

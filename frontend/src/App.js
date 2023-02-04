@@ -18,6 +18,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Following from './Components/Following';
 import MySubgredit from './Components/MySubgredit';
+import SubgreditForm from './Components/SubgreditForm';
+import AllGredits from './Components/AllGredits';
 
 
 function App() {
@@ -41,9 +43,11 @@ function App() {
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
+            <Route path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
+            <Route path="/ProfilePage/MySubGredit/form" element={<SubgreditForm></SubgreditForm>} />
+            <Route path="/AllGredits" element={<AllGredits></AllGredits>} />
+
           </Routes>
-          <Route path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
-          
         </div>
       </div>
     </Router>

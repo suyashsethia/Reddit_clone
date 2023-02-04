@@ -262,21 +262,57 @@ const SubGredit = mongoose.model("SubGredit", greditnameschema)
 
 
 app.post('/api/CreateSubGredit', async (req, res) => {
-    // console.log(req.body)
-
-    var newSubGredit = new SubGredit({
-        GreditName: req.body.GreditName,
-        GreditDescription: req.body.GreditDescription,
-        GreditCreatorEmail: req.body.GreditCreatorEmail,
-        GreditCreatorUserName: req.body.GreditCreatorUserName,
-        GreditTags: req.body.GreditTags,
-        GreditPosts: [],
-        GreditFollowers: [],
-        GreditBannedwords: [],
-    })
-    newSubGredit.save();
+    console.log(req.body)
+    var newSubGredit = {
+        "GreditName": req.body.GreditName,
+        "GreditDescription": req.body.GreditDescription,
+        "GreditCreatorEmail": req.body.GreditCreatorEmail,
+        "GreditCreatorUserName": req.body.GreditCreatorUserName,
+        "GreditTags": req.body.GreditTags,
+        "GreditPosts": [],
+        "GreditFollowers": [],
+        "GreditBannedwords": [],
+    }
+    var mygredit = new SubGredit(newSubGredit)
+    mygredit.save();
     res.status(200).json({ success: true })
 })
+
+//get sub gredit of login user
+app.post('/api/MySubgredit', async (req, res) => {
+    console.log(req.body)
+    // const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    const SubGreditOfLogin = await SubGredit.find({ GreditCreatorUserName: req.body.UserNameOfLogin })
+    console.log(SubGreditOfLogin)
+    res.json({
+        SubGredit_Of_Login: SubGreditOfLogin
+    })
+
+})
+
+app.post('/api/AllGredits', async (req, res) => {
+    // console.log(req.body)
+    const AllGredits = await SubGredit.find({})
+    console.log(AllGredits)
+    res.json({
+        All_Gredits: AllGredits
+    })
+
+})
+
+
+
+//schema for posts in sub gredit
+const postSchema = new mongoose.Schema({
+    PostName: String,
+    PostDescription: String,
+    PostCreatorEmail: String,
+    PostCreatorUserName: String,
+    PostGreditName: String,
+    PostUpvotes: Number,
+    PostDownvotes: Number,
+})
+
 
 app.listen(port, () => {
     console.log(`this app started succesfully on ${port}`)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const SubgreditForm = () => {
 
@@ -10,6 +10,7 @@ const SubgreditForm = () => {
     const change = (e) => {
         if (e.target.id === 'GreditName') {
             setGreditName(e.target.value)
+            console.log(GreditName)
         }
         else if (e.target.id === 'GreditDescription') {
             setGreditDescription(e.target.value)
@@ -22,10 +23,11 @@ const SubgreditForm = () => {
         }
     }
 
-    const makegredit = (e) => {
+    const makegredit = async (e) => {
         e.preventDefault();
-        const User_local = JSON.parse(localStorage.getItem('User'))
-        fetch('http://localhost:100/api/CreateSubGredit', {
+        const User_local = JSON.parse(localStorage.getItem('UserData'))
+        // console.log(User_local)
+        let res = await fetch('http://localhost:100/api/CreateSubGredit', {
             method: 'POST',
             body: JSON.stringify({
                 "GreditName": GreditName,
@@ -39,13 +41,13 @@ const SubgreditForm = () => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
         })
-            .then((res) => res.json())
-            .then((post) => {
-                setGreditName('');
-                setGreditDescription('');
-                setGreditTags('');
-                setGreditBannedWords('');
-            })
+        // .then((res) => res.json())
+        // .then((post) => {
+        //     setGreditName('');
+        //     setGreditDescription('');
+        //     setGreditTags('');
+        //     setGreditBannedWords('');
+        // })
     }
 
     return (
@@ -56,7 +58,7 @@ const SubgreditForm = () => {
             </div>
             <div className="form-group">
                 <label htmlFor="exampleFormControlTextarea1">Description</label>
-                <textarea className="form-control" id="GreditDescription" value={GreditDescription} rows={3} onChange={change} defaultValue={""} />
+                <textarea className="form-control" id="GreditDescription" value={GreditDescription} rows={3} onChange={change} />
             </div>
             <div className="form-group">
                 <label htmlFor="exampleFormControlInput1">Tags</label>
