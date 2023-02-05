@@ -20,7 +20,8 @@ const AllGredits = () => {
         setAllGredits(x.All_Gredits)
     }
     return (
-        <div>{AllGredits.map(({ GreditName, GreditDescription }) => (
+        <div>
+            {AllGredits.map(({ GreditName, GreditDescription }) => (
             <div key={GreditName} className=" my-3 card w-75 ">
                 <div className="card-body my-3">
                     <h5 className="card-title">{GreditName}</h5>

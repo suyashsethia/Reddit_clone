@@ -297,10 +297,18 @@ app.post('/api/AllGredits', async (req, res) => {
     res.json({
         All_Gredits: AllGredits
     })
-
+    
 })
 
 
+app.post('/api/GreditPage', async (req, res) => {
+    console.log(req.body)
+    const GreditPage = await SubGredit.find({ GreditName: req.body.GreditName })
+    console.log(GreditPage)
+    res.json({
+        Gredit_Page: GreditPage
+    })
+})
 
 //schema for posts in sub gredit
 const postSchema = new mongoose.Schema({
@@ -312,6 +320,26 @@ const postSchema = new mongoose.Schema({
     PostUpvotes: Number,
     PostDownvotes: Number,
 })
+
+const Post = mongoose.model("Post", postSchema)
+
+app.post('/api/CreatePost', async (req, res) => {
+    console.log(req.body)
+    var newPost = {
+        "PostName": req.body.PostName,
+        "PostDescription": req.body.PostDescription,
+        "PostCreatorEmail": req.body.PostCreatorEmail,
+        "PostCreatorUserName": req.body.PostCreatorUserName,
+        "PostGreditName": req.body.PostGreditName,
+        "PostUpvotes": 0,
+        "PostDownvotes": 0,
+    }
+    var mypost = new Post(newPost)
+    mypost.save();
+    res.status(200).json({ success: true })
+})
+
+
 
 
 app.listen(port, () => {

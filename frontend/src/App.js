@@ -20,7 +20,7 @@ import Following from './Components/Following';
 import MySubgredit from './Components/MySubgredit';
 import SubgreditForm from './Components/SubgreditForm';
 import AllGredits from './Components/AllGredits';
-
+import GreditPage from './Components/GreditPage';
 
 function App() {
   return (
@@ -34,19 +34,19 @@ function App() {
             </Route>
             <Route path="/SignIn" element={<Auth></Auth>}>
             </Route>
-            <Route path="/ProfilePage/Followers" element={<Followers></Followers>}>
+            <Route exact path="/ProfilePage/Followers" element={<Followers></Followers>}>
             </Route>
-            <Route path="/ProfilePage/Following" element={<Following></Following>}>
+            <Route exact path="/ProfilePage/Following" element={<Following></Following>}>
             </Route>
-            <Route path="/AllUsers" element={<AllUsers></AllUsers>}>
+            <Route exact path="/AllUsers" element={<AllUsers></AllUsers>}>
             </Route>
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
-            <Route path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
-            <Route path="/ProfilePage/MySubGredit/form" element={<SubgreditForm></SubgreditForm>} />
-            <Route path="/AllGredits" element={<AllGredits></AllGredits>} />
-
+            <Route exact path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
+            <Route exact path="/ProfilePage/MySubGredit/form" element={<SubgreditForm></SubgreditForm>} />
+            <Route exact path="/AllGredits" element={<AllGredits></AllGredits>} />
+            <Route  path="/GreditPage/:Name" element={<GreditPage></GreditPage>}></Route>
           </Routes>
         </div>
       </div>
