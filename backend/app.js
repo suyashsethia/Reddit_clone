@@ -330,7 +330,7 @@ app.post('/api/CreatePost', async (req, res) => {
         "PostDescription": req.body.PostDescription,
         "PostCreatorEmail": req.body.PostCreatorEmail,
         "PostCreatorUserName": req.body.PostCreatorUserName,
-        "PostGreditName": req.body.PostGreditName,
+        "PostSubGreditName": req.body.PostGreditName,
         "PostUpvotes": 0,
         "PostDownvotes": 0,
     }
@@ -339,6 +339,15 @@ app.post('/api/CreatePost', async (req, res) => {
     res.status(200).json({ success: true })
 })
 
+app.post('/api/AllPosts', async (req, res) => {
+    // console.log(req.body)
+    const AllPosts = await Post.find({})
+    console.log(AllPosts)
+    res.json({
+        All_Posts: AllPosts
+    })
+    
+})
 
 
 

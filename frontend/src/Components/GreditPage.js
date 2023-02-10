@@ -1,57 +1,68 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
+import Modal from  './Modal'
 
-const GreditPAge = () => {
-    let i = 1;
+const GreditPage = () => {
+    // let i = 1;
     const params = useParams();
     // const { Name } = useParams();
 
 
 
-    // console.log(params)
+    console.log(params.Name)
     const [Gredit_Page, setGredit_Page] = useState()
-    const GetgreditDetails = async () => {
-        let res = await fetch('http://localhost:100/api/GreditPage', {
-            method: "POST",
-            body: JSON.stringify({
-                "GreditName": params.Name
-            }),
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            // setAllGredits(x.All_Gredits)
-
-
-        })
-        const x = await res.json()
-        console.log(x)
-        console.log(x.Gredit_Page[0])
-        setGredit_Page(x.Gredit_Page[0])
-    }
-    console.log(Gredit_Page)
 
     useEffect(() => {
+        const GetgreditDetails = async () => {
+            // e.preventDefault()
+
+            let res = await fetch('http://localhost:100/api/GreditPage',
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        GreditName: params.Name
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+            // console.log("fuck")
+            let x = await res.json()
+
+            console.log(x)
+            if (x.error) {
+                console.log("error hai")
+            }
+            // // console.log(x)
+            else if (x === undefined) {
+                console.log("undefined hai  BC")
+                setGredit_Page({
+                    GreditName: 'Undefined',
+                    GreditDescription: 'Undefined',
+                    GreditCreatorEmail: 'Undefined',
+                    GreditCreatorUserName: 'Undefined',
+                    GreditTags: [],
+                    GreditPosts: [],
+                    GreditFollowers: [],
+                    GreditBannedwords: [],
+                    __v: 0
+                })
+            }
+            else {
+                console.log("undefined nahi hai  BC")
+                setGredit_Page(x.Gredit_Page[0])
+            }
+        }
+
         GetgreditDetails();
+
     }, [])
-
-
-
 
     return (
         <div>
             <section style={{ backgroundColor: '#eee' }}>
                 <div className="container py-5">
                     <div className="row">
-                        <div className="col">
-                            <nav aria-label="breadcrumb" className="bg-light rounded-3 p-3 mb-4">
-                                <ol className="breadcrumb mb-0">
-                                    <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li className="breadcrumb-item"><a href="#">User</a></li>
-                                    <li className="breadcrumb-item active" aria-current="page">User Profile</li>
-                                </ol>
-                            </nav>
-                        </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-4">
@@ -67,36 +78,11 @@ const GreditPAge = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="card mb-4 mb-lg-0">
-                                <div className="card-body p-0">
-                                    <ul className="list-group list-group-flush rounded-3">
-                                        <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <i className="fas fa-globe fa-lg text-warning" />
-                                            <p className="mb-0">https://mdbootstrap.com</p>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <i className="fab fa-github fa-lg" style={{ color: '#333333' }} />
-                                            <p className="mb-0">mdbootstrap</p>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <i className="fab fa-twitter fa-lg" style={{ color: '#55acee' }} />
-                                            <p className="mb-0">@mdbootstrap</p>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <i className="fab fa-instagram fa-lg" style={{ color: '#ac2bac' }} />
-                                            <p className="mb-0">mdbootstrap</p>
-                                        </li>
-                                        <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                            <i className="fab fa-facebook-f fa-lg" style={{ color: '#3b5998' }} />
-                                            <p className="mb-0">mdbootstrap</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+
                         </div>
                         <div className="col-lg-8">
                             <div className="card mb-4">
-                                <div className="card-body">
+                                {Gredit_Page && <div className="card-body">
                                     <div className="row">
                                         <div className="col-sm-3">
                                             <p className="mb-0">Name of Gredit</p>
@@ -146,9 +132,13 @@ const GreditPAge = () => {
                                             <p className="text-muted mb-0">Bay Area, San Francisco, CA</p>
                                         </div>
                                     </div>
-                                </div>
+                                </div>}
                             </div>
-                            <div className="row">
+                            <div>
+                                <Modal></Modal>
+                            </div>
+
+                            {/* <div className="row">
                                 <div className="col-md-6">
                                     <div className="card mb-4 mb-md-0">
                                         <div className="card-body">
@@ -205,7 +195,7 @@ const GreditPAge = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -215,4 +205,4 @@ const GreditPAge = () => {
     )
 }
 
-export default GreditPAge
+export default GreditPage

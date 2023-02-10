@@ -33,7 +33,7 @@ const SignUp = () => {
             SetLastName(e.target.value)
         }
     }
-
+console.log(FirstName)
     const posttoexpress = (e) => {
         if ((FirstName === '') || (Age === 0) || (Password === '') || (LastName === '') || (PhoneNumber === 0) || (Email === '') || (UserName === '')) {
             alert("fill all fields")

@@ -43,11 +43,11 @@ const SubgreditForm = () => {
         <div><form>
             <div className="form-group">
                 <label htmlFor="exampleFormControlInput1">Name</label>
-                <input type="email" className="form-control" id="GreditName" value={PostName} onChange={change} placeholder="" />
+                <input type="email" className="form-control" id="PostName" value={PostName} onChange={change} placeholder="" />
             </div>
             <div className="form-group">
                 <label htmlFor="exampleFormControlTextarea1">Description</label>
-                <textarea className="form-control" id="GreditDescription" value={PostDescription} rows={3} onChange={change} />
+                <textarea className="form-control" id="PostDescription" value={PostDescription} rows={3} onChange={change} />
             </div>
             <div className="mt-4 pt-2">
                 <input onClick={makePost} className="btn btn-info btn-lg" type="submit" defaultValue="Submit" />

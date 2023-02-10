@@ -21,6 +21,7 @@ import MySubgredit from './Components/MySubgredit';
 import SubgreditForm from './Components/SubgreditForm';
 import AllGredits from './Components/AllGredits';
 import GreditPage from './Components/GreditPage';
+import AllPosts from './Components/AllPosts';
 
 function App() {
   return (
@@ -40,13 +41,15 @@ function App() {
             </Route>
             <Route exact path="/AllUsers" element={<AllUsers></AllUsers>}>
             </Route>
-            {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
+           {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
             <Route exact path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
             <Route exact path="/ProfilePage/MySubGredit/form" element={<SubgreditForm></SubgreditForm>} />
             <Route exact path="/AllGredits" element={<AllGredits></AllGredits>} />
             <Route  path="/GreditPage/:Name" element={<GreditPage></GreditPage>}></Route>
+            <Route  path="/AllPosts" element={<AllPosts/>}></Route>
+          
           </Routes>
         </div>
       </div>

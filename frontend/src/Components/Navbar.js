@@ -26,7 +26,7 @@ const Navbar = () => {
                 <ul className="visible navbar-nav mr-auto">
                     <li className="nav-item active">
                         <Link className="nav-link float-right" to="">Home <span className="sr-only">(current)</span></Link>
-
+                        {/* <i class="bi bi-briefcase-fill"></i> */}
                         {/* <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a> */}
                     </li>
                     {/* <li className="nav-item">
@@ -59,6 +59,10 @@ const Navbar = () => {
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="ProfilePage/MySubGredit"> Mygredits <span className="sr-only">(current)</span></Link>
                     </li>
+                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to="AllPosts"> AllPosts <span className="sr-only">(current)</span></Link>
+                    </li>
+                    
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="AllGredits"> AllGredits <span className="sr-only">(current)</span></Link>
                     </li>
