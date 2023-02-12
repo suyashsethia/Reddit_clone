@@ -8,6 +8,8 @@ const cors = require("cors");
 const { chownSync } = require("fs");
 const { userInfo } = require("os");
 const con = mongoose.connection
+var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 const url = "mongodb+srv://suyash:suyash2303@cluster0.rhhwane.mongodb.net/test"
 mongoose.set('strictQuery', true);
 mongoose.connect(url, { useNewUrlParser: true });
@@ -98,12 +100,12 @@ app.use(express.urlencoded())
 
 app.post('/SignUp', async function (req, res) {
     // console.log(req.body)
-    var password = req.body.Password;
 
     // encrypt password
-    // var salt = await bcrypt.genSaltSync(10);
-    // var encryptedpassword = await bcrypt.hashSync(password, salt);
-
+    var password = req.body.Password;
+    var salt = await bcrypt.genSaltSync(10);
+    var encryptedpassword = await bcrypt.hashSync(password, salt);
+    console.log(encryptedpassword)
     var data = {
         "FirstName": req.body.FirstName,
         "LastName": req.body.LastName,
@@ -111,7 +113,7 @@ app.post('/SignUp', async function (req, res) {
         "Email": req.body.Email,
         "PhoneNumber": req.body.PhoneNumber,
         "Age": req.body.Age,
-        "Password": req.body.Password,
+        "Password": encryptedpassword,
         "Followers": [],
         "Following": [],
     }
@@ -222,8 +224,10 @@ app.post('/SignIn', async function (req, res) {
     const data = await User.findOne({ Email: req.body.Email })
 
     // console.log(data)
+    var truth = await bcrypt.compareSync(req.body.Password, data.Password); // To Check Passwordu
     if (data) {
-        if (data.Password === req.body.Password) {
+        if (truth) {
+
             error_message_to_React = "Correct Login id"
         }
         else {
@@ -241,6 +245,18 @@ app.post('/SignIn', async function (req, res) {
     })
 })
 
+
+app.post('/api/GetLocal_Following', async (req, res) => {
+    console.log(req.body)
+    const UserName = req.body.UserNameOfLogin
+
+    const Following = await User.findOne({ UserName: UserName })
+    console.log(Following.Following)
+    res.json({
+        Following: Following.Following
+
+    })
+})
 
 //SUB GREDDIT WORK BEGINS HERE
 
@@ -297,7 +313,7 @@ app.post('/api/AllGredits', async (req, res) => {
     res.json({
         All_Gredits: AllGredits
     })
-    
+
 })
 
 
@@ -325,6 +341,8 @@ const Post = mongoose.model("Post", postSchema)
 
 app.post('/api/CreatePost', async (req, res) => {
     console.log(req.body)
+
+
     var newPost = {
         "PostName": req.body.PostName,
         "PostDescription": req.body.PostDescription,
@@ -346,7 +364,7 @@ app.post('/api/AllPosts', async (req, res) => {
     res.json({
         All_Posts: AllPosts
     })
-    
+
 })
 
 

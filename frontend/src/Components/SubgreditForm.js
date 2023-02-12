@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const SubgreditForm = () => {
 
+    const navigate = useNavigate()
     const [GreditName, setGreditName] = useState('')
     const [GreditDescription, setGreditDescription] = useState('')
     const [GreditTags, setGreditTags] = useState('')
@@ -41,13 +43,18 @@ const SubgreditForm = () => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
         })
-        // .then((res) => res.json())
-        // .then((post) => {
-        //     setGreditName('');
-        //     setGreditDescription('');
-        //     setGreditTags('');
-        //     setGreditBannedWords('');
-        // })
+
+        let x = await res.json()
+        console.log(x)
+
+        if (x.success) {
+
+            setGreditName('');
+            setGreditDescription('');
+            setGreditTags('');
+            setGreditBannedWords('');
+            navigate("/ProfilePage/MySubGredit")
+        }
     }
 
     return (

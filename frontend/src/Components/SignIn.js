@@ -52,7 +52,7 @@ const SignIn = () => {
             })
             let response = await res.json()
             // SetError(response.error)
-            // console.log(Error)
+            // console.log(Error)Na
             // let error = response.error
             console.log(response.error)
             console.log(response.User_data)

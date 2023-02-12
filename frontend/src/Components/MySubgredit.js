@@ -26,13 +26,16 @@ const MySubgredit = () => {
     const func = () => {
         navigate("/ProfilePage/MySubGredit/form")
     }
-
+    const lejao = (e) => {
+        console.log("lejao")
+        navigate(`/GreditPage/${e.target.id}`)
+    }
     return (
         <div>
-<div className='my-3'>
+            <div className='my-3'>
 
-            <button type="button" onClick={func} className="btn btn-info p-4 mx-5"> Create New Gredit</button>
-</div>
+                <button type="button" onClick={func} className="btn btn-info p-4 mx-5"> Create New Gredit</button>
+            </div>
             <div>
 
                 {Subgredit.map(({ GreditName, GreditDescription }) => (
@@ -40,7 +43,7 @@ const MySubgredit = () => {
                         <div className="card-body my-3">
                             <h5 className="card-title">{GreditName}</h5>
                             <p className="card-text">{GreditDescription}</p>
-                            <button className="btn btn-info">Know More</button>
+                            <button id={GreditName} onClick={lejao} className="btn btn-info">Know More</button>
                         </div>
                     </div>
                 ))
