@@ -23,7 +23,7 @@ const AllUsers = () => {
         x = await res.json()
         // console.log(x.AllUsers[1].UserName)
         y = x.AllUsers
-        // console.log(y)
+        console.log(y)
         // setUsers(await res.json())
         // y.map ( (item) => {
         //     // console.log(item)
@@ -35,6 +35,10 @@ const AllUsers = () => {
     }
     useEffect(() => {
         GetAllUsers();
+    }, [])
+
+    useEffect(() => {
+        // GetAllUsers();
         getLocal_Following()
     }, [local_following])
 
@@ -87,12 +91,12 @@ const AllUsers = () => {
         setlocal_Following(x.Following)
         // local_following = x.Following;
     }
-    
     console.log(local_following)
-    let pool = [
-    ]
+
+    // console.log(local_following)
+    let pool = []
     // let local_following = JSON.parse(localStorage.getItem('UserData')).Following
-    let y
+    let y = 1
     // console.log(local_following)
     // console.log(Users)
     for (let j = 0; j < Users.length; j++) {
@@ -100,7 +104,7 @@ const AllUsers = () => {
         for (let index = 0; index < local_following.length; index++) {
             y = 1;
             // const element = array[index];
-            console.log(local_following[index].FollowersUserName, Users[j].UserName)
+            // console.log(local_following[index].FollowersUserName, Users[j].UserName)
             if (local_following[index].FollowingUserName === Users[j].UserName) {
                 console.log("haha")
                 y = 0
@@ -120,7 +124,7 @@ const AllUsers = () => {
         }
 
     }
-    console.log(pool)
+    // console.log(pool)
 
     // const IsaFollowerofLocalUSer = 0;
     // console.log(j)
@@ -134,7 +138,8 @@ const AllUsers = () => {
                         <div className="card-body my-3">
                             <h5 className="card-title">{UserName}</h5>
                             <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                            <button id={UserName} onClick={Follow(UserName)} disabled={IsaFollowerofLocalUSer} className="btn btn-info">Follow</button>
+
+                            <button disabled={IsaFollowerofLocalUSer} id={UserName} onClick={Follow(UserName)} className="btn btn-info">Follow</button>
                         </div>
                     </div>
                 ))}

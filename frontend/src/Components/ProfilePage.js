@@ -25,16 +25,39 @@ const ProfilePage = () => {
         }
     }
     const [User_data, SetUser_data] = useState({})
+    const [Following_Number, SetFollowing_Number] = useState(0)
+    const [Followers_Number, SetFollowers_Number] = useState(0)
+
 
     useEffect(() => {
-
         let string_saved_in_local_storage = localStorage.getItem('UserData')
         console.log(string_saved_in_local_storage)
 
         SetUser_data(JSON.parse(string_saved_in_local_storage))
         console.log(User_data)
-        // const { User_Name } = useParams();
-    })
+        const GetFollowersandFollowing = async () => {
+            let res = await fetch('http://localhost:100/api/GetFollowersandFollowing', {
+                method: "POST",
+                body: JSON.stringify({
+                    UserName: JSON.parse(localStorage.getItem('UserData')).UserName
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+
+            let x = await res.json()
+            console.log(x)
+            console.log(x.Followers_length)
+            console.log(x.Following_length)
+            SetFollowers_Number(x.Followers_length)
+            SetFollowing_Number(x.Following_length)
+
+        }
+        GetFollowersandFollowing()
+
+
+    }, [])
     // let { path, url } = useMatch();
     let followers = 10;
     return (
@@ -144,8 +167,8 @@ const ProfilePage = () => {
                             </div>
                         </div>
                         <div className='my-3'>
-                            <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {followers}</button>
-                            <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {followers}</button>
+                            <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {Followers_Number}</button>
+                            <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {Following_Number}</button>
                         </div>
                         <div className="row">
                             <div className="col-md-6">

@@ -80,6 +80,13 @@ const nameSchema = new mongoose.Schema({
         }],
         // unique: false,
         sparse: true
+    },
+    GreditPageFollowed: {
+        type: [{
+            GreditName: String,
+        }],
+        // unique: false,
+        sparse: true
     }
 
 });
@@ -134,7 +141,7 @@ app.post('/AllUsers', async function (req, res) {
     res.json({
         AllUsers: datas
     })
-    // console.log(datas)
+    console.log(datas)
 })
 
 //getting followers data from react
@@ -224,7 +231,7 @@ app.post('/SignIn', async function (req, res) {
     const data = await User.findOne({ Email: req.body.Email })
 
     // console.log(data)
-    var truth = await bcrypt.compareSync(req.body.Password, data.Password); // To Check Passwordu
+    var truth = bcrypt.compareSync(req.body.Password, data.Password); // To Check Password 
     if (data) {
         if (truth) {
 
@@ -245,16 +252,38 @@ app.post('/SignIn', async function (req, res) {
     })
 })
 
+app.post('/api/GetFollowersandFollowing', async (req, res) => {
+    // console.log(req.body)
+    const UserName = req.body.UserName
+    const person = await User.find({ UserName: UserName })
+    res.json({
+        Followers_length: person[0].Followers.length,
+        Following_length: person[0].Following.length,
+        status: "success"
+    })
+})
+
 
 app.post('/api/GetLocal_Following', async (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const UserName = req.body.UserNameOfLogin
 
     const Following = await User.findOne({ UserName: UserName })
-    console.log(Following.Following)
+    // console.log(Following.Following)
     res.json({
         Following: Following.Following
 
+    })
+})
+
+
+app.post('/api/GetLocal_GreditFollowing', async (req, res) => {
+    console.log(req.body)
+    const UserName = await req.body.UserNameOfLogin
+    const a = await User.findOne({ UserName: UserName })
+
+    res.json({
+        GreditPageFollowed: a.GreditPageFollowed
     })
 })
 
@@ -325,6 +354,27 @@ app.post('/api/GreditPage', async (req, res) => {
         Gredit_Page: GreditPage
     })
 })
+
+app.post('/api/FollowGreditPAge', async (req, res) => {
+    console.log(req.body)
+
+    const GreditToFollow = await SubGredit.find({ GreditName: req.body.GreditNameTofollow })
+    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    // console.log(GreditToFollow[0])
+    GreditToFollow[0].GreditFollowers.push({
+        GreditFollowerUserName: UserOfLogin[0].UserName,
+        GreditFollowerEmail: UserOfLogin[0].Email,
+    })
+    UserOfLogin[0].GreditPageFollowed.push({
+        GreditName: GreditToFollow[0].GreditName,
+    })
+    await GreditToFollow[0].save();
+    await UserOfLogin[0].save();
+    res.json({
+        success: true
+    })
+})
+
 
 //schema for posts in sub gredit
 const postSchema = new mongoose.Schema({

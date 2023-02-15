@@ -1,16 +1,46 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import Modal from  './Modal'
+import Modal from './Modal'
+import { useNavigate } from 'react-router-dom';
 
 const GreditPage = () => {
-    // let i = 1;
+
     const params = useParams();
-    // const { Name } = useParams();
+    const navigate = useNavigate()
+    const [AllPosts, setAllPosts] = useState([])
+    const [Following_Number, SetFollowing_Number] = useState(0)
+    const [Followers_Number, SetFollowers_Number] = useState(0)
 
 
 
     console.log(params.Name)
     const [Gredit_Page, setGredit_Page] = useState()
+
+    const GetAllPosts = async () => {
+        let res = await fetch('http://localhost:100/api/AllPosts', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+
+        let x = await res.json()
+        console.log(x)
+        setAllPosts(x.All_Posts)
+    }
+    const lejao = (e) => {
+        console.log("lejao")
+        // navigate(`/GreditPage/${e.target.id}`)
+    }
+    const func = (e) => {
+        if (e.target.id === 'Followers_Gredit') {
+            navigate('/GreditPage/Followers')
+        }
+        else if (e.target.id === 'Following_Gredit') {
+            navigate('/GreditPage/Following')
+        }
+    }
+
 
     useEffect(() => {
         const GetgreditDetails = async () => {
@@ -55,8 +85,48 @@ const GreditPage = () => {
         }
 
         GetgreditDetails();
-
+        GetAllPosts();
     }, [])
+
+
+    const Follow = async (e) => {
+        e.preventDefault()
+        let res = await fetch('http://localhost:100/api/FollowGreditPAge',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    GreditNameTofollow: params.Name,
+                    UserNameOfLogin: JSON.parse(localStorage.getItem('UserData')).UserName
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        // console.log(x)
+        // for (let index = 0; index < local_following.length; index++) {
+        //     // const element = array[index];
+        //     // e.target
+
+        // }
+        if (x.success === true) {
+            alert('Followed')
+            // e.target.style.display = 'none'
+        }
+
+        const Unfollow = async (e) => {
+
+            e.preventDefault()
+
+
+        }
+        const checkiffollower = async (e) => {
+            e.preventDefault()
+
+
+        }
+
+    }
 
     return (
         <div>
@@ -73,7 +143,7 @@ const GreditPage = () => {
                                     <p className="text-muted mb-1">Full Stack Developer</p>
                                     <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                     <div className="d-flex justify-content-center mb-2">
-                                        <button type="button" className="btn btn-primary">Follow</button>
+                                        <button onClick={Follow()} disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button>
                                         <button type="button" className="btn btn-outline-primary ms-1">Message</button>
                                     </div>
                                 </div>
@@ -137,65 +207,28 @@ const GreditPage = () => {
                             <div>
                                 <Modal></Modal>
                             </div>
+                            <div className='my-3'>
+                                <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {Following_Number}</button>
+                                <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {Followers_Number}</button>
+                            </div>
+                            <div>
 
-                            {/* <div className="row">
-                                <div className="col-md-6">
-                                    <div className="card mb-4 mb-md-0">
-                                        <div className="card-body">
-                                            <p className="mb-4"><span className="text-primary font-italic me-1">assigment</span> Project Status
-                                            </p>
-                                            <p className="mb-1" style={{ fontSize: '.77rem' }}>Web Design</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '80%' }} aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Website Markup</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '72%' }} aria-valuenow={72} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>One Page</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '89%' }} aria-valuenow={89} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Mobile Template</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '55%' }} aria-valuenow={55} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Backend API</p>
-                                            <div className="progress rounded mb-2" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '66%' }} aria-valuenow={66} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
+                                {AllPosts.map(({ PostName, PostDescription, PostUpvotes, PostDownvotes, PostCreatorUserName, PostSubGreditName }) => (
+                                    <div key={PostName} className=" my-3 card w-75 ">
+                                        <div className="card-body my-3">
+                                            <h5 className="card-title">{PostName}</h5>
+                                            <p className="card-text">{PostDescription}</p>
+                                            <p className="card-text">SubgreditName : {PostSubGreditName}</p>
+                                            <p className="card-text">CreatorName : {PostCreatorUserName}</p>
+                                            <p className="card-text">Upvotes : {PostUpvotes}</p>
+                                            <p className="card-text">Upvotes : {PostDownvotes}</p>
+                                            <button className="btn btn-info" id={PostName} onClick={lejao}>Know More</button>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="card mb-4 mb-md-0">
-                                        <div className="card-body">
-                                            <p className="mb-4"><span className="text-primary font-italic me-1">assigment</span> Project Status
-                                            </p>
-                                            <p className="mb-1" style={{ fontSize: '.77rem' }}>Web Design</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '80%' }} aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Website Markup</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '72%' }} aria-valuenow={72} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>One Page</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '89%' }} aria-valuenow={89} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Mobile Template</p>
-                                            <div className="progress rounded" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '55%' }} aria-valuenow={55} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                            <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Backend API</p>
-                                            <div className="progress rounded mb-2" style={{ height: '5px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '66%' }} aria-valuenow={66} aria-valuemin={0} aria-valuemax={100} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
+                                ))
+
+                                }</div>
+
                         </div>
                     </div>
                 </div>
