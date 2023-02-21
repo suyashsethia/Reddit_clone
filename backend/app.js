@@ -134,7 +134,37 @@ app.post('/SignUp', async function (req, res) {
             // res.status(400).send("unable to save to database");
         });
 })
+
+
+app.post('/api/EditDetails', async (req, res) => {
+    console.log(req.body.Age)
+
+    let UserEmail = req.body.Email
+    let k = await User.findOne({ Email: UserEmail })
+
+
+    k.FirstName = req.body.FirstName
+    k.LastName = req.body.LastName
+    k.UserName = req.body.UserName
+    k.Email = req.body.Email
+    k.PhoneNumber = req.body.PhoneNumber
+    k.Age = req.body.Age
+
+    console.log(k);
+
+    await k.save();
+
+    res.status(200).json({ success: true })
+    // print error message
+    // console.log(error_message_to_React)
+
+})
+
+
+
 let error_message_to_React = ""
+
+
 
 app.post('/AllUsers', async function (req, res) {
     const datas = await User.find({ field: "UserName" })
@@ -227,7 +257,7 @@ app.post('/api/RemoveFollower', async (req, res) => {
     res.status(200).json({ success: true })
 })
 app.post('/SignIn', async function (req, res) {
-    // console.log(req.body)
+    console.log(req.body)
     const data = await User.findOne({ Email: req.body.Email })
 
     // console.log(data)
@@ -308,21 +338,33 @@ const SubGredit = mongoose.model("SubGredit", greditnameschema)
 
 app.post('/api/CreateSubGredit', async (req, res) => {
     console.log(req.body)
+    Tags_different = req.body.GreditTags.split(" ")
+    Banned_different = req.body.GreditBannedWords.split(" ")
     var newSubGredit = {
         "GreditName": req.body.GreditName,
         "GreditDescription": req.body.GreditDescription,
         "GreditCreatorEmail": req.body.GreditCreatorEmail,
         "GreditCreatorUserName": req.body.GreditCreatorUserName,
-        "GreditTags": req.body.GreditTags,
+        "GreditTags": Tags_different,
         "GreditPosts": [],
-        "GreditFollowers": [],
-        "GreditBannedwords": [],
+        "GreditFollowers": [{ "GreditFollowerUserName": req.body.GreditCreatorUserName, "GreditFollowerEmail": req.body.GreditCreatorEmail }],
+        "GreditBannedwords": Banned_different,
     }
     var mygredit = new SubGredit(newSubGredit)
     mygredit.save();
     res.status(200).json({ success: true })
 })
 
+app.post('/api/DeleteSubgredit', async (req, res) => {
+    console.log(req.body)
+    Gredit = await SubGredit.findOne({ GreditName: req.body.GreditName })
+    posts_to_delete = Gredit.GreditPosts
+    Gredit.remove();
+    for (var i = 0; i < posts_to_delete.length; i++) {
+        await Post.findOneAndDelete({ _id: posts_to_delete[i]._id })
+    }
+    res.status(200).json({ success: true })
+})
 //get sub gredit of login user
 app.post('/api/MySubgredit', async (req, res) => {
     console.log(req.body)
@@ -345,6 +387,22 @@ app.post('/api/AllGredits', async (req, res) => {
 
 })
 
+app.post('/api/GetGreditFollowers', async (req, res) => {
+    console.log(req.body)
+    const GreditName = req.body.GreditName
+    const GreditPage = await SubGredit.find({ GreditName: GreditName })
+    console.log(GreditPage[0].GreditFollowers)
+    if (GreditPage == null) {
+        res.json({
+            GreditFollowers: []
+        })
+    }
+    else {
+        res.json({
+            GreditFollowers: GreditPage[0].GreditFollowers
+        })
+    }
+})
 
 app.post('/api/GreditPage', async (req, res) => {
     console.log(req.body)

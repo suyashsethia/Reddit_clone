@@ -58,7 +58,9 @@ const SubgreditForm = () => {
     }
 
     return (
-        <div><form>
+        <div>
+            
+            <form>
             <div className="form-group">
                 <label htmlFor="exampleFormControlInput1">Name</label>
                 <input type="email" className="form-control" id="GreditName" value={GreditName} onChange={change} placeholder="" />
@@ -68,11 +70,11 @@ const SubgreditForm = () => {
                 <textarea className="form-control" id="GreditDescription" value={GreditDescription} rows={3} onChange={change} />
             </div>
             <div className="form-group">
-                <label htmlFor="exampleFormControlInput1">Tags</label>
+                <label htmlFor="exampleFormControlInput1">Tags (enter space separated words)</label>
                 <input type="email" className="form-control" id="GreditTags" value={GreditTags} onChange={change} placeholder="" />
             </div>
             <div className="form-group">
-                <label htmlFor="exampleFormControlInput1">BannedWords</label>
+                <label htmlFor="exampleFormControlInput1">BannedWords (enter space separated words)</label>
                 <input type="email" className="form-control" id="GreditBannedWords" value={GreditBannedWords} onChange={change} placeholder="" />
             </div>
             <div className="mt-4 pt-2">

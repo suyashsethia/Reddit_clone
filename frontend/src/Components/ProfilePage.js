@@ -2,6 +2,12 @@ import React, { useEffect } from 'react'
 // import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import withAuth from './withAuth';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import SignIn from './SignIn';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
     BrowserRouter as Router,
     Switch,
@@ -10,11 +16,54 @@ import {
     useParams,
     useMatch, useNavigate
 } from "react-router-dom";
-import SignIn from './SignIn';
+// import { set } from 'mongoose';
 // import { Link } from 'react-router-dom';
 
 
+
+
 const ProfilePage = () => {
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+
+    const Editrequest = async () => {
+        setShow(true);
+        let res = await fetch('http://localhost:100/api/EditDetails', {
+            method: 'POST',
+            body: JSON.stringify({
+                "UserName": User_data.UserName,
+                "Email": User_data.Email,
+                "Password": User_data.Password,
+                "FirstName": User_data.FirstName,
+                "LastName": User_data.LastName,
+                "Age": User_data.Age,
+                "PhoneNumber": User_data.PhoneNumber,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+
+        
+        let x = await res.json()
+        console.log(x.status)
+        if (x.success) {
+            localStorage.setItem('UserData', JSON.stringify(User_data))
+            console.log('success')
+            toast.success('Details Updated Successfully')
+        }
+        else {
+            console.log('fail')
+            SetUser_data(JSON.parse(localStorage.getItem('UserData')))
+            toast.error('Details Update Failed')
+        }
+    }
+    const handleShow = () => {
+        setShow(true);
+
+
+    }
     let navigate = useNavigate();
     const func = (e) => {
         if (e.target.id === 'Followers') {
@@ -61,7 +110,20 @@ const ProfilePage = () => {
     // let { path, url } = useMatch();
     let followers = 10;
     return (
+
         <div className='w-full'><section style={{ backgroundColor: '#eee' }}>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <div className="container py-5">
                 <div className="row">
                     <div className="col">
@@ -90,32 +152,7 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="card mb-4 mb-lg-0">
-                            <div className="card-body p-0">
-                                <ul className="list-group list-group-flush rounded-3">
-                                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i className="fas fa-globe fa-lg text-warning" />
-                                        <p className="mb-0">https://mdbootstrap.com</p>
-                                    </li>
-                                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i className="fab fa-github fa-lg" style={{ color: '#333333' }} />
-                                        <p className="mb-0">mdbootstrap</p>
-                                    </li>
-                                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i className="fab fa-twitter fa-lg" style={{ color: '#55acee' }} />
-                                        <p className="mb-0">@mdbootstrap</p>
-                                    </li>
-                                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i className="fab fa-instagram fa-lg" style={{ color: '#ac2bac' }} />
-                                        <p className="mb-0">mdbootstrap</p>
-                                    </li>
-                                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                                        <i className="fab fa-facebook-f fa-lg" style={{ color: '#3b5998' }} />
-                                        <p className="mb-0">mdbootstrap</p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+
                     </div>
                     <div className="col-lg-8">
                         <div className="card mb-4">
@@ -166,68 +203,113 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="editmodal">
+                            <Button variant="primary" onClick={handleShow}>
+                            Edit Details
+                            </Button>
+
+                            <Modal show={show} onHide={handleClose}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Edit Details</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <Form>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>UserName (unchangable)</Form.Label>
+                                            <Form.Control
+                                                type="Name"
+                                                // placeholder="
+                                                autoFocus
+                                                value={User_data.UserName}
+                                               
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>FirstName</Form.Label>
+                                            <Form.Control
+                                                type="Name"
+                                                // placeholder="name@example.com"
+                                                autoFocus
+                                                value={User_data.FirstName}
+                                                onChange={(e) => {
+                                                    SetUser_data({ ...User_data, FirstName: e.target.value })
+                                                }}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>LastName</Form.Label>
+
+                                            <Form.Control
+                                                type="Name"
+                                                // placeholder="
+                                                autoFocus
+                                                value={User_data.LastName}
+                                                onChange={(e) => {
+                                                    SetUser_data({ ...User_data, LastName: e.target.value })
+                                                }}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>Age</Form.Label>
+                                            <Form.Control
+
+                                                type="Age"
+                                                // placeholder="
+                                                autoFocus
+                                                value={User_data.Age}
+                                                onChange={(e) => {
+                                                    SetUser_data({ ...User_data, Age: e.target.value })
+                                                }}
+
+                                            />
+                                        </Form.Group>
+
+
+
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>Email address (is fixed )</Form.Label>
+                                            <Form.Control
+                                                type="email "
+                                                // placeholder="name@example.com"
+                                                autoFocus
+                                                value={User_data.Email}
+                                            // onChange={(e) => {
+                                            //     SetUser_data({ ...User_data, Email: e.target.value })
+                                            // }}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                            <Form.Label>Phone Number</Form.Label>
+                                            <Form.Control
+                                                type="Phone"
+                                                // placeholder="
+                                                autoFocus
+                                                value={User_data.PhoneNumber}
+                                                onChange={(e) => {
+                                                    SetUser_data({ ...User_data, PhoneNumber: e.target.value })
+                                                }}
+                                            />
+                                        </Form.Group>
+
+
+                                    </Form>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={handleClose}>
+                                        Close
+                                    </Button>
+                                    <Button variant="primary" onClick={Editrequest}>
+                                        Save Changes
+                                    </Button>
+                                </Modal.Footer>
+                            </Modal>
+                        </div>
                         <div className='my-3'>
                             <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {Followers_Number}</button>
                             <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {Following_Number}</button>
                         </div>
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="card mb-4 mb-md-0">
-                                    <div className="card-body">
-                                        <p className="mb-4"><span className="text-primary font-italic me-1">assigment</span> Project Status
-                                        </p>
-                                        <p className="mb-1" style={{ fontSize: '.77rem' }}>Web Design</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '80%' }} aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Website Markup</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '72%' }} aria-valuenow={72} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>One Page</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '89%' }} aria-valuenow={89} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Mobile Template</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '55%' }} aria-valuenow={55} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Backend API</p>
-                                        <div className="progress rounded mb-2" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '66%' }} aria-valuenow={66} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className="card mb-4 mb-md-0">
-                                    <div className="card-body">
-                                        <p className="mb-4"><span className="text-primary font-italic me-1">assigment</span> Project Status
-                                        </p>
-                                        <p className="mb-1" style={{ fontSize: '.77rem' }}>Web Design</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '80%' }} aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Website Markup</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '72%' }} aria-valuenow={72} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>One Page</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '89%' }} aria-valuenow={89} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Mobile Template</p>
-                                        <div className="progress rounded" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '55%' }} aria-valuenow={55} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                        <p className="mt-4 mb-1" style={{ fontSize: '.77rem' }}>Backend API</p>
-                                        <div className="progress rounded mb-2" style={{ height: '5px' }}>
-                                            <div className="progress-bar" role="progressbar" style={{ width: '66%' }} aria-valuenow={66} aria-valuemin={0} aria-valuemax={100} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

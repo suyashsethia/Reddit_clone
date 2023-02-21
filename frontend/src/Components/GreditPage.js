@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import Modal from './Modal'
 import { useNavigate } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
 const GreditPage = () => {
 
     const params = useParams();
+    const location = useLocation()
     const navigate = useNavigate()
     const [AllPosts, setAllPosts] = useState([])
     const [Following_Number, SetFollowing_Number] = useState(0)
     const [Followers_Number, SetFollowers_Number] = useState(0)
+    // const [Tags, setTags] = useState([])
 
 
-
-    console.log(params.Name)
+    // console.log(params.Name)
+    // console.log("location ",location.pathname.slice(0,11))
     const [Gredit_Page, setGredit_Page] = useState()
 
     const GetAllPosts = async () => {
@@ -25,11 +27,11 @@ const GreditPage = () => {
         })
 
         let x = await res.json()
-        console.log(x)
+        // console.log(x)
         setAllPosts(x.All_Posts)
     }
     const lejao = (e) => {
-        console.log("lejao")
+        // console.log("lejao")
         // navigate(`/GreditPage/${e.target.id}`)
     }
     const func = (e) => {
@@ -41,7 +43,7 @@ const GreditPage = () => {
         }
     }
 
-
+    // Tags = []
     useEffect(() => {
         const GetgreditDetails = async () => {
             // e.preventDefault()
@@ -59,13 +61,13 @@ const GreditPage = () => {
             // console.log("fuck")
             let x = await res.json()
 
-            console.log(x)
+            // console.log(x)
             if (x.error) {
-                console.log("error hai")
+                // console.log("error hai")
             }
             // // console.log(x)
             else if (x === undefined) {
-                console.log("undefined hai  BC")
+                // console.log("undefined hai  BC")
                 setGredit_Page({
                     GreditName: 'Undefined',
                     GreditDescription: 'Undefined',
@@ -79,9 +81,10 @@ const GreditPage = () => {
                 })
             }
             else {
-                console.log("undefined nahi hai  BC")
+                // console.log("undefined nahi hai  BC")
                 setGredit_Page(x.Gredit_Page[0])
-            }
+                console.log("Gredit details", x.Gredit_Page[0])
+ }
         }
 
         GetgreditDetails();
@@ -143,7 +146,7 @@ const GreditPage = () => {
                                     <p className="text-muted mb-1">Full Stack Developer</p>
                                     <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                     <div className="d-flex justify-content-center mb-2">
-                                        <button onClick={Follow()} disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button>
+                                        {/* <button onClick={Follow()} disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button> */}
                                         <button type="button" className="btn btn-outline-primary ms-1">Message</button>
                                     </div>
                                 </div>
@@ -182,16 +185,15 @@ const GreditPage = () => {
                                     <hr />
                                     <div className="row">
                                         <div className="col-sm-3">
-                                            <p className="mb-0">Tags</p>
+                                            <p className="mb-0">Tags </p>
                                         </div>
-                                        {/* <div className="col-sm-9">
-                                            {Gredit_Page.GreditTags.map(({ item, index }) => (
-                                                <div key={index}>
-                                                    <p className="text-muted mb-0">{item}</p>
+                                        <div className="col-sm-9">
+                                            <p className="text-muted mb-0">{ Gredit_Page.GreditTags } </p>
+                                            {/* {Gredit_Page.map(({ GreditName, GreditTags }) => (
+                                                <div key={GreditName}>
                                                 </div>
-                                            ))
-                                            }
-                                        </div> */}
+                                            ))} */}
+                                        </div>
                                     </div>
                                     <hr />
                                     <div className="row">
@@ -199,7 +201,7 @@ const GreditPage = () => {
                                             <p className="mb-0">Banned Words</p>
                                         </div>
                                         <div className="col-sm-9">
-                                            <p className="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                                            <p className="text-muted mb-0">{ Gredit_Page.GreditBannedwords }</p>
                                         </div>
                                     </div>
                                 </div>}

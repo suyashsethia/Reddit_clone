@@ -24,6 +24,10 @@ import GreditPage from './Components/GreditPage';
 import AllPosts from './Components/AllPosts';
 import Followers_Gredit from './Components/Followers_Gredit';
 import Following_Gredit from './Components/Following_Gredit';
+import Reported from './Components/Reported';
+import Stats from './Components/Stats';
+import Joining from './Components/Joining';
+import Gredit_Users from './Components/Gredit_Users';
 
 function App() {
   return (
@@ -45,6 +49,13 @@ function App() {
             </Route>
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
+           <Route exact path="/GreditPage/:Name/Stats" element={<Stats></Stats>}/> 
+           <Route exact path="/GreditPage/:Name/Joining" element={<Joining></Joining>}/> 
+           <Route exact path="/GreditPage/:Name/Users" element={<Gredit_Users></Gredit_Users>}/> 
+
+           <Route exact path="/GreditPage/:Name/Reporting" element={<Reported></Reported>}/> 
+            <Route exact path="/Sub_Greddiit_Page" element={"Sub_Greddiit_Page"}></Route>
+
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
             <Route exact path="/ProfilePage/MySubGredit" element={<MySubgredit></MySubgredit>} />
             <Route exact path="/ProfilePage/MySubGredit/form" element={<SubgreditForm></SubgreditForm>} />

@@ -3,7 +3,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { useParams } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function Example() {
 
     const params = useParams()
@@ -45,7 +46,18 @@ function Example() {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
+
+
+
         })
+        let x = await res.json()
+        console.log(x)
+        if (x.success) {
+            toast.success("Post Created Successfully")
+        }
+        else {
+            toast.error("Post Creation Failed")
+        }
         setShow(false)
         setPostName('')
         setPostDescription('')
@@ -53,6 +65,18 @@ function Example() {
 
     return (
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <Button variant="primary" onClick={handleShow}>
                 Create Post
             </Button>
@@ -73,7 +97,7 @@ function Example() {
                         </Form.Group>
                         <Form.Group
                             className="mb-3"
-                            
+
                         >
                             <Form.Label>Description</Form.Label>
                             <Form.Control as="textarea" id="PostDescription" value={PostDescription} rows={3} onChange={change} />
@@ -85,7 +109,7 @@ function Example() {
                         Close
                     </Button>
                     <Button variant="primary" onClick={makePost}>
-                        Save Changes 
+                        Save Changes
                     </Button>
                 </Modal.Footer>
             </Modal>
