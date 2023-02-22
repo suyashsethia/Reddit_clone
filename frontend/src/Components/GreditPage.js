@@ -166,7 +166,8 @@ const GreditPage = () => {
                     ReportedUserName: e.target.id,
                     ReportedGreditName: params.Name,
                     ReportConcern: ReportConcern,
-                    ReportedPostName: e.target.className
+                    ReportedPostName: e.target.className,
+                    ReportedGreditCreatorUserName: Gredit_Page.GreditCreatorUserName,
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -252,7 +253,7 @@ const GreditPage = () => {
                                             <p className="mb-0">Tags </p>
                                         </div>
                                         <div className="col-sm-9">
-                                            <p className="text-muted mb-0">{Gredit_Page.GreditTags} </p>
+                                            <p className="text-muted mb-0">{Gredit_Page.GreditTags } </p>
                                             {/* {Gredit_Page.map(({ GreditName, GreditTags }) => (
                                                 <div key={GreditName}>
                                                 </div>

@@ -260,9 +260,10 @@ app.post('/SignIn', async function (req, res) {
     console.log(req.body)
     const data = await User.find({ Email: req.body.Email })
 
-    // console.log(data)
-    if (data) {
+    console.log(data)
+    if (data.length > 0) {
         var truth = bcrypt.compareSync(req.body.Password, data[0].Password); // To Check Password 
+        console.log(truth)
         if (truth) {
 
             error_message_to_React = "Correct Login id"
@@ -276,21 +277,25 @@ app.post('/SignIn', async function (req, res) {
         error_message_to_React = "Mail id Not Found Sign Up First"
     }
     // console.log(error_message_to_React);
-    // res.ReportCreatorUserName,json({
-    //     error: error_message_to_React,
-    //     User_data: data
-    // })
+    res.json({
+        error: error_message_to_React,
+        User_data: data
+    })
 })
 
 app.post('/api/GetFollowersandFollowing', async (req, res) => {
-    // console.log(req.body)
+    console.log("req.body", req.body)
     const UserName = req.body.UserName
+    // console.log("UserName", UserName)
     const person = await User.find({ UserName: UserName })
-    res.json({
-        Followers_length: person[0].Followers.length,
-        Following_length: person[0].Following.length,
-        status: "success"
-    })
+    console.log("person", person)
+    if (person && person.length > 0) {
+        res.json({
+            Followers_length: person[0].Followers.length,
+            Following_length: person[0].Following.length,
+            status: "success"
+        })
+    }
 })
 
 
@@ -302,7 +307,6 @@ app.post('/api/GetLocal_Following', async (req, res) => {
     // console.log(Following.Following)
     res.json({
         Following: Following.Following
-
     })
 })
 
@@ -311,10 +315,11 @@ app.post('/api/GetLocal_GreditFollowing', async (req, res) => {
     console.log(req.body)
     const UserName = await req.body.UserNameOfLogin
     const a = await User.findOne({ UserName: UserName })
-
-    res.json({
-        GreditPageFollowed: a.GreditPageFollowed
-    })
+    if (a) {
+        res.json({
+            GreditPageFollowed: a.GreditPageFollowed
+        })
+    }
 })
 
 //SUB GREDDIT WORK BEGINS HERE
@@ -495,6 +500,7 @@ const reportschema = new mongoose.Schema({
     ReportCreatedAt: { type: Date, default: Date.now },
     ReportStatus: String,  // ignored / blocked / reported / notselected
     ReportedGreditName: String,
+    ReportGreditCreatorUserName: String,
 })
 
 const Report = mongoose.model("Report", reportschema)
@@ -517,6 +523,7 @@ app.post('/api/Report', async (req, res) => {
             "ReportedGreditName": req.body.ReportedGreditName,
             "ReportedPostName": req.body.ReportedPostName,
             "ReportStatus": "notselected",
+            "ReportGreditCreatorUserName": req.body.ReportGreditCreatorUserName,
         }
         var myreport = new Report(newReport)
         myreport.save();

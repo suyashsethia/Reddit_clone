@@ -106,11 +106,17 @@ const AllGredits = () => {
     console.log(pool)
         return (
             <div>
-                {AllGredits.map(({ GreditName, GreditDescription }) => (
+                {AllGredits.map(({ GreditName, GreditDescription ,GreditTags ,GreditCreatorUserName , GreditBannedwords}) => (
                     <div key={GreditName} className=" my-3 card w-75 ">
                         <div className="card-body my-3">
                             <h5 className="card-title">{GreditName}</h5>
                             <p className="card-text">{GreditDescription}</p>
+                            <h5 className="card-title">Tags</h5>
+                            <p className="card-text">{GreditTags}</p>
+                            <h5 className="card-title">Created By</h5>
+                            <p className="card-text">{GreditCreatorUserName}</p>
+                            <h5 className="card-title">GreditBannedwords</h5>
+                            <p className="card-text">{GreditBannedwords}</p>
                             <button className="btn btn-info " id={GreditName} onClick={lejao}>Know More</button>
                             {/* <button onClick={Follow(GreditName)}disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button> */}
                      

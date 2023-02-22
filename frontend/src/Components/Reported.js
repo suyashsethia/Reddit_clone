@@ -21,13 +21,13 @@ const Reported = () => {
     let res = await fetch('http://localhost:100/api/UpdateReportStatus', {
       method: 'POST',
       body: JSON.stringify({
-          "Report_id":e.target.id,
+        "Report_id": e.target.id,
       }),
       headers: {
-          'Content-type': 'application/json; charset=UTF-8',
+        'Content-type': 'application/json; charset=UTF-8',
       },
-  })
-  
+    })
+
     if (radioValue === 'Ignore') {
 
     }
@@ -76,7 +76,7 @@ const Reported = () => {
       <h3>
         Reports agains {params.Name}
       </h3>
-      {Reports.map(({ _id, ReportConcern, ReportedByUserName, ReportedByUserEmail, ReportedPostName, ReportedGreditName, ReportedUserName, ReportStatus }) => (
+      {Reports.map(({ _id, ReportConcern, ReportedByUserName, ReportedByUserEmail, ReportedPostName, ReportedGreditName, ReportedUserName, ReportStatus, ReportGreditCreatorUserName }) => (
         <div key={_id} className=" my-3 card w-75">
           <div className="card-body my-3">
             <h6 className="card-title">Report Concern</h6>
@@ -94,7 +94,7 @@ const Reported = () => {
             <h6 className="card-title">Report Status</h6>
             <p className="card-text">{ReportStatus}</p>
 
-            <ButtonGroup style={{ display: (ReportedUserName === localStorage.getItem('UserData').UserName) ? "block" : "none" }}>
+            <ButtonGroup style={{ display: (ReportGreditCreatorUserName === localStorage.getItem('UserData').UserName) ? "block" : "none" }}>
               {radios.map((radio, idx) => (
                 <ToggleButton
                   onClick={handleShow}
