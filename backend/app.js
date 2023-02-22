@@ -176,7 +176,7 @@ app.post('/AllUsers', async function (req, res) {
 
 //getting followers data from react
 app.post('/api/Follow', async (req, res) => {
-    // console.log(req.body)
+    console.log(req.body)
     const UserToFollow = await User.find({ UserName: req.body.UserNameTofollow })
     const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
     // console.log(UserToFollow[0], UserOfLogin[0])
@@ -258,11 +258,12 @@ app.post('/api/RemoveFollower', async (req, res) => {
 })
 app.post('/SignIn', async function (req, res) {
     console.log(req.body)
-    const data = await User.find({ Email: req.body.Email })
+    const data = await User.findOne({ Email: req.body.Email })
 
     console.log(data)
-    if (data.length > 0) {
-        var truth = bcrypt.compareSync(req.body.Password, data[0].Password); // To Check Password 
+    var truth = bcrypt.compareSync(req.body.Password, data.Password); // To Check Password 
+    
+    if (data!=null) {
         console.log(truth)
         if (truth) {
 
@@ -386,10 +387,9 @@ app.post('/api/AllGredits', async (req, res) => {
     // console.log(req.body)
     const AllGredits = await SubGredit.find({})
     console.log(AllGredits)
-    res.json({
+    res.status(200).json({
         All_Gredits: AllGredits
     })
-
 })
 
 app.post('/api/GetGreditFollowers', async (req, res) => {

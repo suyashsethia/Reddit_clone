@@ -371,6 +371,7 @@ const ProfilePage = () => {
             localStorage.setItem('UserData', JSON.stringify(User_data))
             console.log('success')
             toast.success('Details Updated Successfully')
+            setShow(false);
         }
         else {
             console.log('fail')
@@ -427,7 +428,8 @@ const ProfilePage = () => {
 
     }, [])
     // let { path, url } = useMatch();
-    let followers = 10;
+    console.log("User_data", User_data)
+
     return (
 
         <div className='w-full'><section style={{ backgroundColor: '#eee' }}>
