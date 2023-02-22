@@ -156,9 +156,12 @@ const GreditPage = () => {
     const Report = async (e) => {
         e.preventDefault()
         console.log("ReportedUserName", e.target.id)
+
+        let j = e.target.className
+        j = j.substring(0, j.length - 16)
+        console.log("j", j)
         let res = await fetch('http://localhost:100/api/Report',
             {
-
                 method: "POST",
                 body: JSON.stringify({
                     ReportedByUserName: local_user.UserName,
@@ -166,7 +169,7 @@ const GreditPage = () => {
                     ReportedUserName: e.target.id,
                     ReportedGreditName: params.Name,
                     ReportConcern: ReportConcern,
-                    ReportedPostName: e.target.className,
+                    ReportedPostName: j,
                     ReportedGreditCreatorUserName: Gredit_Page.GreditCreatorUserName,
                 }),
                 headers: {
@@ -207,12 +210,12 @@ const GreditPage = () => {
                             <div className="card mb-4">
                                 <div className="card-body text-center">
                                     <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" className="rounded-circle img-fluid" style={{ width: '150px' }} />
-                                    <h5 className="my-3">John Smith</h5>
-                                    <p className="text-muted mb-1">Full Stack Developer</p>
-                                    <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                                    {/* <h5 className="my-3">John Smith</h5> */}
+                                    {/* <p className="text-muted mb-1">Full Stack Developer</p> */}
+                                    {/* <p className="text-muted mb-4">Bay Area, San Francisco, CA</p> */}
                                     <div className="d-flex justify-content-center mb-2">
                                         {/* <button onClick={Follow()} disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button> */}
-                                        <button type="button" className="btn btn-outline-primary ms-1">Message</button>
+                                        {/* <button type="button" className="btn btn-outline-primary ms-1">Message</button> */}
                                     </div>
                                 </div>
                             </div>
@@ -253,7 +256,7 @@ const GreditPage = () => {
                                             <p className="mb-0">Tags </p>
                                         </div>
                                         <div className="col-sm-9">
-                                            <p className="text-muted mb-0">{Gredit_Page.GreditTags } </p>
+                                            <p className="text-muted mb-0">{Gredit_Page.GreditTags} </p>
                                             {/* {Gredit_Page.map(({ GreditName, GreditTags }) => (
                                                 <div key={GreditName}>
                                                 </div>
@@ -269,14 +272,24 @@ const GreditPage = () => {
                                             <p className="text-muted mb-0">{Gredit_Page.GreditBannedwords}</p>
                                         </div>
                                     </div>
+                                    <hr />
+                                    <div className="row">
+                                        <div className="col-sm-3">
+                                            <p className="mb-0">Followers</p>
+                                        </div>
+
+                                        <div className="col-sm-9">
+                                            <p className="text-muted mb-0">{Gredit_Page.GreditFollowers.length}</p>
+                                        </div>
+                                    </div>
                                 </div>}
                             </div>
                             <div>
                                 <Example></Example>
                             </div>
                             <div className='my-3'>
-                                <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {Following_Number}</button>
-                                <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {Followers_Number}</button>
+                                {/* <button type="button" onClick={func} id="Followers" className="btn btn-info p-4 mx-5">Followers: {Gredit_Page.GreditFollowers}</button> */}
+                                {/* <button type="button" onClick={func} id='Following' className="btn btn-info p-4 ">Following: {Followers_Number}</button> */}
                             </div>
                             <div>
 

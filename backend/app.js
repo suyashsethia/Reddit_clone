@@ -262,8 +262,8 @@ app.post('/SignIn', async function (req, res) {
 
     console.log(data)
     var truth = bcrypt.compareSync(req.body.Password, data.Password); // To Check Password 
-    
-    if (data!=null) {
+
+    if (data != null) {
         console.log(truth)
         if (truth) {
 
@@ -336,6 +336,8 @@ const greditnameschema = new mongoose.Schema({
     GreditPosts: [],
     GreditFollowers: [],
     GreditBannedwords: [],
+    GreditCreatedAt: { type: Date, default: Date.now },
+
 })
 
 
@@ -448,6 +450,7 @@ const postSchema = new mongoose.Schema({
     PostGreditName: String,
     PostUpvotes: Number,
     PostDownvotes: Number,
+    PostCreatedAt: { type: Date, default: Date.now },
 })
 
 const Post = mongoose.model("Post", postSchema)
@@ -500,7 +503,7 @@ const reportschema = new mongoose.Schema({
     ReportCreatedAt: { type: Date, default: Date.now },
     ReportStatus: String,  // ignored / blocked / reported / notselected
     ReportedGreditName: String,
-    ReportGreditCreatorUserName: String,
+    ReportedGreditCreatorUserName: String,
 })
 
 const Report = mongoose.model("Report", reportschema)
@@ -523,7 +526,7 @@ app.post('/api/Report', async (req, res) => {
             "ReportedGreditName": req.body.ReportedGreditName,
             "ReportedPostName": req.body.ReportedPostName,
             "ReportStatus": "notselected",
-            "ReportGreditCreatorUserName": req.body.ReportGreditCreatorUserName,
+            "ReportedGreditCreatorUserName": req.body.ReportedGreditCreatorUserName,
         }
         var myreport = new Report(newReport)
         myreport.save();
@@ -540,8 +543,138 @@ app.post('/api/Report', async (req, res) => {
 app.post('/api/GetReports', async (req, res) => {
     console.log(req.body)
     const Reports = await Report.find({ ReportedGreditName: req.body.GreditName })
-    console.log("Reports", Reports)
+    // console.log("Reports", Reports[0]._id)
     res.json({
         Reports: Reports
     })
+})
+
+app.post('/api/ReportStatus', async (req, res) => {
+
+    console.log(req.body)
+
+    const ReportToChange = await Report.find({ _id: req.body.ReportId })
+    console.log(ReportToChange[0])
+    ReportToChange[0].ReportStatus = req.body.ReportStatus
+    await ReportToChange[0].save();
+    res.json({
+        success: true
+    })
+})
+
+
+
+//request to join subgredit page 
+const joiningSubGreditSchema = new mongoose.Schema({
+
+    JoiningSubGreditName: String,
+    JoiningSubGreditCreatorUserName: String,
+    JoiningUserName: String,
+
+})
+const joiningSubGredit = mongoose.model("joiningSubGredit", joiningSubGreditSchema)
+
+app.post('/api/ApplytoJoin', async (req, res) => {
+    console.log(req.body)
+    alreadyrequested = await joiningSubGredit.find({ JoiningSubGreditName: req.body.JoiningSubGreditName, JoiningUserName: req.body.JoiningUserName })
+
+    if (alreadyrequested.length === 0) {
+        var newjoiningSubGredit = {
+            "JoiningSubGreditName": req.body.JoiningSubGreditName,
+            "JoiningSubGreditCreatorUserName": req.body.JoiningSubGreditCreatorUserName,
+            "JoiningUserName": req.body.JoiningUserName,
+        }
+        var myjoiningSubGredit = new joiningSubGredit(newjoiningSubGredit)
+        myjoiningSubGredit.save();
+        res.status(200).json({ success: true })
+    }
+    else {
+        res.status(200).json({ success: false })
+    }
+})
+
+app.post('/api/GetGreditJoining', async (req, res) => {
+    console.log(req.body)
+    const JoiningSubGredits = await joiningSubGredit.find({ JoiningSubGreditName: req.body.JoiningSubGreditName })
+    console.log("JoiningSubGredits", JoiningSubGredits)
+    res.json({
+        "JoiningList": JoiningSubGredits
+    })
+})
+
+app.post('/api/JoiningtoFollower', async (req, res) => {
+
+    console.log(req.body)
+    const JoiningList = await joiningSubGredit.find({ _id: req.body.JoiningId })
+
+    if (req.body.value === 'accept') {
+
+        console.log(JoiningList[0])
+        const GreditToChange = await SubGredit.find({ GreditName: JoiningList[0].JoiningSubGreditName })
+        console.log(GreditToChange[0])
+        const Use = await User.find({ UserName: JoiningList[0].JoiningUserName })
+        console.log(Use[0])
+        GreditToChange[0].GreditFollowers.push(
+            {
+                "GreditFollowerUserName": Use[0].UserName,
+                "GreditFollowerEmail": Use[0].Email,
+            })
+
+        Use[0].GreditPageFollowed.push(
+            {
+                "GreditName": GreditToChange[0].GreditName,
+
+            })
+        //delete joininglist from database
+
+        await Use[0].save();
+        await GreditToChange[0].save();
+    }
+
+    await joiningSubGredit.deleteOne({ _id: req.body.JoiningId })
+    // await joiningSubGredit.save();
+    res.json({
+        success: true
+    })
+})
+
+app.post('/api/GetStats', async (req, res) => {
+    console.log("sex")
+    console.log(req.body)
+
+    const subgredit = await SubGredit.find({ GreditName: req.body.GreditName })
+    const Followers = subgredit[0].GreditFollowers
+
+    let countByJoiningDate = {};
+    Followers.map((follower) => {
+        if (follower.GreditCreatedAt === undefined) return;
+        let joiningDate = follower.GreditCreatedAt.toDateString();
+        if (!countByJoiningDate[joiningDate]) {
+            countByJoiningDate[joiningDate] = 0;
+        }
+        countByJoiningDate[joiningDate]++;
+    })
+    console.log("countByJoiningDate", countByJoiningDate)
+
+    //posts ke liye stats 
+    const posts = await Post.find({ PostGreditName: req.body.GreditName })
+    let postsbycreationdate = {};
+    posts.map((post) => {
+        // console.log(post.createdAt.toDateString());
+        let creationdate = post.PostCreatedAt.toDateString();
+        if (!postsbycreationdate[creationdate]) {
+            postsbycreationdate[creationdate] = 0;
+        }
+        postsbycreationdate[creationdate]++;
+    })
+    console.log("postsbycreationdate", postsbycreationdate)
+
+    //visitors ke liye stats
+
+    res.status(200).json({
+        countByJoiningDate: countByJoiningDate,
+        postsbycreationdate: postsbycreationdate
+    });
+
+
 })

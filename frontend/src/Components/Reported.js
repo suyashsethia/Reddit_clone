@@ -18,25 +18,24 @@ const Reported = () => {
     console.log("radioValue", radioValue)
     console.log("e.target.id", e.target.id)
 
-    let res = await fetch('http://localhost:100/api/UpdateReportStatus', {
-      method: 'POST',
-      body: JSON.stringify({
-        "Report_id": e.target.id,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-
-    if (radioValue === 'Ignore') {
-
+    
+      let res = await fetch('http://localhost:100/api/ReportStatus', {
+        method: "POST",
+        body: JSON.stringify({
+          "ReportId": e.target.id,
+          "ReportStatus": radioValue,
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
+    
+    let data = await res.json()
+    console.log("responsedata", data)
+    if (data.status === "success") {
+      alert("Report Status Updated")
     }
-    else if (radioValue === 'Block') {
 
-    }
-    else if (radioValue === 'Delete Post') {
-
-    }
   }
   const handleClose = () => {
     setShow(false);
@@ -76,8 +75,9 @@ const Reported = () => {
       <h3>
         Reports agains {params.Name}
       </h3>
-      {Reports.map(({ _id, ReportConcern, ReportedByUserName, ReportedByUserEmail, ReportedPostName, ReportedGreditName, ReportedUserName, ReportStatus, ReportGreditCreatorUserName }) => (
+      {Reports.map(({ _id, ReportConcern, ReportedByUserName, ReportedByUserEmail, ReportedPostName, ReportedGreditName, ReportedUserName, ReportStatus, ReportedGreditCreatorUserName }) => (
         <div key={_id} className=" my-3 card w-75">
+          {console.log("_id", _id)}
           <div className="card-body my-3">
             <h6 className="card-title">Report Concern</h6>
             <p className="card-text">{ReportConcern}</p>
@@ -93,10 +93,11 @@ const Reported = () => {
             <p className="card-text">{ReportedUserName}</p>
             <h6 className="card-title">Report Status</h6>
             <p className="card-text">{ReportStatus}</p>
-
-            <ButtonGroup style={{ display: (ReportGreditCreatorUserName === localStorage.getItem('UserData').UserName) ? "block" : "none" }}>
+            {/* {console.log("ReportedGreditCreatorUserName", ReportedGreditCreatorUserName) , console.log("localStorage.getItem('UserData').UserName", JSON.parse(localStorage.getItem('UserData')).UserName)} */}
+            <ButtonGroup style={{ display: (((ReportedGreditCreatorUserName) === (JSON.parse(localStorage.getItem('UserData')).UserName))) ? "block" : "none" }}>
               {radios.map((radio, idx) => (
                 <ToggleButton
+                  disabled={ReportStatus != 'notselected' ? true : false}
                   onClick={handleShow}
                   key={idx}
                   id={`radio-${idx}`}

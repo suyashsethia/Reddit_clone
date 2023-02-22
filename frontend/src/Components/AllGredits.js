@@ -104,28 +104,57 @@ const AllGredits = () => {
         }
     }
     console.log(pool)
-        return (
-            <div>
-                {AllGredits.map(({ GreditName, GreditDescription ,GreditTags ,GreditCreatorUserName , GreditBannedwords}) => (
-                    <div key={GreditName} className=" my-3 card w-75 ">
-                        <div className="card-body my-3">
-                            <h5 className="card-title">{GreditName}</h5>
-                            <p className="card-text">{GreditDescription}</p>
-                            <h5 className="card-title">Tags</h5>
-                            <p className="card-text">{GreditTags}</p>
-                            <h5 className="card-title">Created By</h5>
-                            <p className="card-text">{GreditCreatorUserName}</p>
-                            <h5 className="card-title">GreditBannedwords</h5>
-                            <p className="card-text">{GreditBannedwords}</p>
-                            <button className="btn btn-info " id={GreditName} onClick={lejao}>Know More</button>
-                            {/* <button onClick={Follow(GreditName)}disabled={IsalreadyFollowedbyLocalUSer} className="btn btn-info mx-2">Follow</button> */}
-                     
-
-                        </div>
-                    </div>
-                ))
-                }</div>
-        )
+    const ApplytoJoin = async (GreditName, GreditCreatorUserName) => {
+        let k =JSON.parse(localStorage.getItem('UserData')).UserName
+        if(k===GreditCreatorUserName)
+        {
+            alert('You are the creator of this Gredit')
+            return
+        } 
+        let res = await fetch('http://localhost:100/api/ApplytoJoin',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    "JoiningSubGreditName": GreditName,
+                    "JoiningSubGreditCreatorUserName": GreditCreatorUserName,
+                    "JoiningUserName": k
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            alert('Applied')
+        }
+        else
+        {
+            alert('Already Applied')
+        }
     }
+    return (
+        <div>
+            {AllGredits.map(({ GreditName, GreditDescription, GreditTags, GreditCreatorUserName, GreditBannedwords }) => (
+                <div key={GreditName} className=" my-3 card w-75 ">
+                    <div className="card-body my-3">
+                        <h5 className="card-title">{GreditName}</h5>
+                        <p className="card-text">{GreditDescription}</p>
+                        <h5 className="card-title">Tags</h5>
+                        <p className="card-text">{GreditTags}</p>
+                        <h5 className="card-title">Created By</h5>
+                        <p className="card-text">{GreditCreatorUserName}</p>
+                        <h5 className="card-title">GreditBannedwords</h5>
+                        <p className="card-text">{GreditBannedwords}</p>
+                        <button className="btn btn-info " id={GreditName} onClick={lejao}>Know More</button>
+                        <button onClick={() => { ApplytoJoin(GreditName, GreditCreatorUserName) }}  className="btn btn-info mx-2">ApplytoJoin</button>
 
-    export default AllGredits
+
+                    </div>
+                </div>
+            ))
+            }</div>
+    )
+}
+
+export default AllGredits

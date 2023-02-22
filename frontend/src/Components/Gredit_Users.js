@@ -43,8 +43,6 @@ const Gredit_Users = () => {
               
               <h6 className="card-title">Email</h6>
               <p className="card-text">{GreditFollowerEmail}</p>
-
-
               {/* <button disabled={IsaFollowerofLocalUSer} id={UserName} onClick={Follow(UserName)} className="btn btn-info">Follow</button> */}
             </div>
           </div>
