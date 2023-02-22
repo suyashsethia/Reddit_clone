@@ -5,10 +5,11 @@ import Modal from 'react-bootstrap/Modal';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 function Example() {
 
     const params = useParams()
-    console.log(params)
+    console.log("params.Name",params.Name)
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -39,7 +40,7 @@ function Example() {
                 "PostDescription": PostDescription,
                 "PostCreatorUserName": User_local.UserName,
                 "PostCreatorEmail": User_local.Email,
-                "PostSubGreditName": params.Name,
+                "PostGreditName": params.Name,
                 "PostUpvotes": 0,
                 "PostDownvotes": 0,
             }),

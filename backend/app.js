@@ -258,11 +258,11 @@ app.post('/api/RemoveFollower', async (req, res) => {
 })
 app.post('/SignIn', async function (req, res) {
     console.log(req.body)
-    const data = await User.findOne({ Email: req.body.Email })
+    const data = await User.find({ Email: req.body.Email })
 
     // console.log(data)
-    var truth = bcrypt.compareSync(req.body.Password, data.Password); // To Check Password 
     if (data) {
+        var truth = bcrypt.compareSync(req.body.Password, data[0].Password); // To Check Password 
         if (truth) {
 
             error_message_to_React = "Correct Login id"
@@ -276,10 +276,10 @@ app.post('/SignIn', async function (req, res) {
         error_message_to_React = "Mail id Not Found Sign Up First"
     }
     // console.log(error_message_to_React);
-    res.json({
-        error: error_message_to_React,
-        User_data: data
-    })
+    // res.ReportCreatorUserName,json({
+    //     error: error_message_to_React,
+    //     User_data: data
+    // })
 })
 
 app.post('/api/GetFollowersandFollowing', async (req, res) => {
@@ -405,9 +405,9 @@ app.post('/api/GetGreditFollowers', async (req, res) => {
 })
 
 app.post('/api/GreditPage', async (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const GreditPage = await SubGredit.find({ GreditName: req.body.GreditName })
-    console.log(GreditPage)
+    // console.log(GreditPage)
     res.json({
         Gredit_Page: GreditPage
     })
@@ -456,7 +456,7 @@ app.post('/api/CreatePost', async (req, res) => {
         "PostDescription": req.body.PostDescription,
         "PostCreatorEmail": req.body.PostCreatorEmail,
         "PostCreatorUserName": req.body.PostCreatorUserName,
-        "PostSubGreditName": req.body.PostGreditName,
+        "PostGreditName": req.body.PostGreditName,
         "PostUpvotes": 0,
         "PostDownvotes": 0,
     }
@@ -465,18 +465,76 @@ app.post('/api/CreatePost', async (req, res) => {
     res.status(200).json({ success: true })
 })
 
-app.post('/api/AllPosts', async (req, res) => {
-    // console.log(req.body)
-    const AllPosts = await Post.find({})
-    console.log(AllPosts)
+app.post('/api/Get_Gredit_Posts', async (req, res) => {
+    console.log("sfsafsa", req.body)
+    const Gredit_Posts = await Post.find({ "PostGreditName": req.body.GreditName })
+    console.log("POSTS", Gredit_Posts)
     res.json({
-        All_Posts: AllPosts
+        Gredit_Posts: Gredit_Posts
     })
-
 })
 
 
 
 app.listen(port, () => {
     console.log(`this app started succesfully on ${port}`)
+})
+
+
+
+
+//Report Work Starts here 
+
+const reportschema = new mongoose.Schema({
+
+    ReportedByUserName: String,
+    ReportedByUserEmail: String,
+    ReportedPostName: String,
+    ReportedUserName: String,
+    ReportConcern: String,
+    ReportCreatedAt: { type: Date, default: Date.now },
+    ReportStatus: String,  // ignored / blocked / reported / notselected
+    ReportedGreditName: String,
+})
+
+const Report = mongoose.model("Report", reportschema)
+
+
+app.post('/api/Report', async (req, res) => {
+    console.log(req.body)
+
+    //find a report which is already there 
+    const ReportToCheck = await Report.find({ ReportedPostName: req.body.ReportedPostName, ReportedByUserName: req.body.ReportedByUserName, ReportedUserName: req.body.ReportedUserName, ReportedGreditName: req.body.ReportGreditName })
+    // const ReportToCheck = await Report.find({ ReportedByUserName: req.body.ReportedByUserName })
+
+    if (ReportToCheck.length === 0) {
+
+        var newReport = {
+            "ReportedByUserName": req.body.ReportedByUserName,
+            "ReportedByUserEmail": req.body.ReportedByUserEmail,
+            "ReportedUserName": req.body.ReportedUserName,
+            "ReportConcern": req.body.ReportConcern,
+            "ReportedGreditName": req.body.ReportedGreditName,
+            "ReportedPostName": req.body.ReportedPostName,
+            "ReportStatus": "notselected",
+        }
+        var myreport = new Report(newReport)
+        myreport.save();
+        res.status(200).json({ success: true })
+    }
+    else {
+        res.status(200).json({ success: false })
+
+    }
+
+})
+
+
+app.post('/api/GetReports', async (req, res) => {
+    console.log(req.body)
+    const Reports = await Report.find({ ReportedGreditName: req.body.GreditName })
+    console.log("Reports", Reports)
+    res.json({
+        Reports: Reports
+    })
 })
