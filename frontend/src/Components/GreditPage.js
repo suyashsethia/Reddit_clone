@@ -20,8 +20,16 @@ const GreditPage = () => {
     const [Gredit_Posts, setGredit_Posts] = useState([])
     const [Following_Number, SetFollowing_Number] = useState(0)
     const [Followers_Number, SetFollowers_Number] = useState(0)
-    // const [Tags, setTags] = useState([])
+    const [Comment, setComment] = useState('')
     const local_user = JSON.parse(localStorage.getItem('UserData'))
+
+    const change = (e) => {
+        if (e.target.id === 'Comment') {
+            setComment(e.target.value)
+        }
+    }
+    // const [Tags, setTags] = useState([])
+    // const [upvote, setUpvote] = useState(0)
 
     // console.log(params.Name)
     // console.log("location ",location.pathname.slice(0,11))
@@ -89,7 +97,8 @@ const GreditPage = () => {
             let res = await fetch('http://localhost:100/api/Get_Gredit_Posts', {
                 method: "POST",
                 body: JSON.stringify({
-                    "GreditName": params.Name
+                    "GreditName": params.Name,
+                    "UserNameOfLogin": local_user.UserName
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -125,7 +134,6 @@ const GreditPage = () => {
             toast.success('Followed')
             // e.target.style.display = 'none'
         }
-
 
     }
     const Unfollow = async (e) => {
@@ -187,6 +195,110 @@ const GreditPage = () => {
         setShowmodal(false)
         setReportConcern('')
     }
+    const upvotePost = async (postid) => {
+        // console.log("upvotePost", postid)
+        // e.preventDefault()
+        console.log("upvotePost", postid)
+        let res = await fetch('http://localhost:100/api/upvotePost',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    PostId: postid,
+                    local_user: local_user
+
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            toast.success('Upvoted')
+        }
+        else {
+            toast.error('Already Upvoted')
+        }
+        // setShowmodal(false)
+    }
+
+    const downvotePost = async (postid) => {
+        // e.preventDefault()
+        console.log("downvotePost", postid)
+        let res = await fetch('http://localhost:100/api/downvotePost',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    PostId: postid,
+                    local_user: local_user
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+
+        if (x.success === true) {
+            toast.success('Downvoted')
+        }
+        else {
+            toast.error('Already Downvoted')
+        }
+        // setShowmodal(false)  
+    }
+
+    const Comment_func = async (_id) => {
+
+        // e.preventDefa
+        console.log("Comment", _id)
+        let res = await fetch('http://localhost:100/api/CommentOnPost',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    PostId: _id,
+                    Comment: Comment,
+                    local_user: local_user
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            toast.success('Commented')
+        }
+        else {
+            toast.error('not Commented')
+        }
+    }
+
+    const Save = async (postid) => {
+        // e.preventDefault()
+        console.log("Save", postid)
+        let res = await fetch('http://localhost:100/api/SavePost',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    PostId: postid,
+                    local_user: local_user
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+            })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            toast.success('Saved')
+        }
+        else {
+            toast.error('Already Saved')
+        }
+        // setShowmodal(false)
+    }
+
     return (
         <div>
             <ToastContainer
@@ -282,6 +394,17 @@ const GreditPage = () => {
                                             <p className="text-muted mb-0">{Gredit_Page.GreditFollowers.length}</p>
                                         </div>
                                     </div>
+                                    <hr />
+                                    <div className="row">
+                                        <div className="col-sm-3">
+                                            <p className="mb-0">Posts</p>
+                                        </div>
+
+                                        <div className="col-sm-9">
+                                            <p className="text-muted mb-0">{Gredit_Posts.length}</p>
+                                        </div>
+                                    </div>
+
                                 </div>}
                             </div>
                             <div>
@@ -293,18 +416,31 @@ const GreditPage = () => {
                             </div>
                             <div>
 
-                                {Gredit_Posts.map(({ PostName, PostDescription, PostUpvotes, PostDownvotes, PostCreatorUserName, PostGreditName }) => (
+                                {Gredit_Posts.map(({ _id, PostComments, PostName, PostDescription, PostUpvotes, PostDownvotes, PostCreatorUserName, PostGreditName }) => (
                                     <div key={PostName} className=" my-3 card w-75 ">
                                         <div className="card-body my-3">
                                             <h5 className="card-title">{PostName}</h5>
                                             <p className="card-text">{PostDescription}</p>
                                             <p className="card-text">SubgreditName : {PostGreditName}</p>
                                             <p className="card-text">CreatorName : {PostCreatorUserName}</p>
-                                            <p className="card-text">Upvotes : {PostUpvotes}</p>
-                                            <p className="card-text">Upvotes : {PostDownvotes}</p>
-                                            <button className="btn btn-info " id={PostName} >UpVote</button>
-                                            <button className="btn btn-warning mx-2 " id={PostName} >DownVote</button>
+                                            <p className="card-text">Upvotes : {PostUpvotes.length}</p>
+                                            <p className="card-text">Downvotes : {PostDownvotes.length}</p>
+                                            <button className="btn btn-info " onClick={() => { upvotePost(_id) }} >UpVote</button>
+                                            <button className="btn btn-warning mx-2 my-1" onClick={() => { downvotePost(_id) }} >DownVote</button>
                                             <button className="btn btn-danger" onClick={handleshowmodal}>Report</button>
+                                            <button className="btn btn-primary mx-2 my-1" onClick={() => { Save(_id) }}>Save Post</button>
+                                            <input type="text" className="form-control" id="Comment" onChange={change} placeholder="Comment" />
+                                            <Button className='btn btn-primary' onClick={() => { Comment_func(_id) }}>Comment</Button>
+                                            <h5 className="card-title">Comments</h5>
+                                            {PostComments.map(({ Comment ,CommentedByUserName }) => (
+                                                <div key={Comment} className=" my-3 card w-75 ">
+                                                    <div className="card-body my-3">
+                                                        <p className="card-text">{Comment}</p>
+                                                        <p className="card-text">CommentByUserName : {CommentedByUserName}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+
                                             <Modal show={showmodal} onHide={() => setShowmodal(false)}>
                                                 <Modal.Header closeButton>
                                                     <Modal.Title>Report</Modal.Title>

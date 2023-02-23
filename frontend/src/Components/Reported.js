@@ -18,18 +18,18 @@ const Reported = () => {
     console.log("radioValue", radioValue)
     console.log("e.target.id", e.target.id)
 
-    
-      let res = await fetch('http://localhost:100/api/ReportStatus', {
-        method: "POST",
-        body: JSON.stringify({
-          "ReportId": e.target.id,
-          "ReportStatus": radioValue,
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        },
-      })
-    
+
+    let res = await fetch('http://localhost:100/api/ReportStatus', {
+      method: "POST",
+      body: JSON.stringify({
+        "ReportId": e.target.id,
+        "ReportStatus": radioValue,
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+
     let data = await res.json()
     console.log("responsedata", data)
     if (data.status === "success") {
@@ -94,42 +94,43 @@ const Reported = () => {
             <h6 className="card-title">Report Status</h6>
             <p className="card-text">{ReportStatus}</p>
             {/* {console.log("ReportedGreditCreatorUserName", ReportedGreditCreatorUserName) , console.log("localStorage.getItem('UserData').UserName", JSON.parse(localStorage.getItem('UserData')).UserName)} */}
-            <ButtonGroup style={{ display: (((ReportedGreditCreatorUserName) === (JSON.parse(localStorage.getItem('UserData')).UserName))) ? "block" : "none" }}>
-              {radios.map((radio, idx) => (
-                <ToggleButton
-                  disabled={ReportStatus != 'notselected' ? true : false}
-                  onClick={handleShow}
-                  key={idx}
-                  id={`radio-${idx}`}
-                  type="radio"
-                  variant={idx % 2 ? 'outline-success' : 'outline-danger'}
-                  name="radio"
-                  value={radio.name}
-                  checked={radioValue === radio.value}
-                  onChange={(e) => setRadioValue(e.currentTarget.value)}
-                >
-
-                  {radio.name}
-                </ToggleButton>
-              ))}
-            </ButtonGroup>
-
-            <Modal style={{ display: show ? "block" : "none" }} show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Are you Sure </Modal.Title>
-              </Modal.Header>
-
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button variant="primary" id={_id} onClick={handleClose_yes}>
-                  Yes
-                </Button>
-              </Modal.Footer>
-            </Modal>
 
           </div>
+          <ButtonGroup style={{ display: (((ReportedGreditCreatorUserName) === (JSON.parse(localStorage.getItem('UserData')).UserName))) ? "block" : "none" }}>
+            {radios.map((radio, idx) => (
+              <ToggleButton
+                disabled={ReportStatus === "Ignore"||ReportStatus === "Block"}
+                onClick={handleShow}
+                key={idx}
+                id={`radio-${idx}`}
+                type="radio"
+                variant={idx % 2 ? 'outline-success' : 'outline-danger'}
+                name="radio"
+                value={radio.name}
+                checked={radioValue === radio.value}
+                onChange={(e) => setRadioValue(e.currentTarget.value)}
+              >
+
+                {radio.name}
+              </ToggleButton>
+            ))}
+          </ButtonGroup>
+
+          <Modal style={{ display: show ? "block" : "none" }} show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Are you Sure </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" id={_id} onClick={handleClose_yes}>
+                Yes
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
 
         </div>
       )

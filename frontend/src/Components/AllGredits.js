@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Fuse from 'fuse.js';
 const AllGredits = () => {
     let navigate = useNavigate()
     const [AllGredits, setAllGredits] = useState([])
@@ -105,12 +106,11 @@ const AllGredits = () => {
     }
     console.log(pool)
     const ApplytoJoin = async (GreditName, GreditCreatorUserName) => {
-        let k =JSON.parse(localStorage.getItem('UserData')).UserName
-        if(k===GreditCreatorUserName)
-        {
+        let k = JSON.parse(localStorage.getItem('UserData')).UserName
+        if (k === GreditCreatorUserName) {
             alert('You are the creator of this Gredit')
             return
-        } 
+        }
         let res = await fetch('http://localhost:100/api/ApplytoJoin',
             {
                 method: "POST",
@@ -128,13 +128,50 @@ const AllGredits = () => {
         if (x.success === true) {
             alert('Applied')
         }
-        else
-        {
+        if(x.success === false) {
             alert('Already Applied')
         }
     }
+
+
+
+    //CODE FOR FILTERING THE GREDITS
+    const [searched, setsearched] = useState();
+    // const [subgreddits, setsubgreddits] = useState([])
+    const [todisplaysubgreddit, settodisplaysubgreddit] = useState([]);
+
+    const options = {
+        includeScore: true,
+        keys: [
+            {
+                name: 'Name',
+                weight: 0.7
+            },
+            {
+                name: 'Tags',
+                weight: 0.3
+            }
+        ]
+    }
+
+
+    const fuse = new Fuse(AllGredits, options);
+    const searchchange = (e) => {
+        setsearched(e.target.value);
+        console.log("searched", searched , e.target.value);
+        const result = fuse.search(searched);
+
+        settodisplaysubgreddit(result);
+        console.log(todisplaysubgreddit);
+    }
     return (
         <div>
+
+
+            <div className="input-group">
+                <input placeholder="gredit search..." value ={searched} onChange={searchchange} type="search" className="form-control rounded"  aria-label="Search" aria-describedby="search-addon" />
+                <button type="button" className="btn btn-outline-primary">search</button>
+            </div>
             {AllGredits.map(({ GreditName, GreditDescription, GreditTags, GreditCreatorUserName, GreditBannedwords }) => (
                 <div key={GreditName} className=" my-3 card w-75 ">
                     <div className="card-body my-3">
@@ -147,7 +184,7 @@ const AllGredits = () => {
                         <h5 className="card-title">GreditBannedwords</h5>
                         <p className="card-text">{GreditBannedwords}</p>
                         <button className="btn btn-info " id={GreditName} onClick={lejao}>Know More</button>
-                        <button onClick={() => { ApplytoJoin(GreditName, GreditCreatorUserName) }}  className="btn btn-info mx-2">ApplytoJoin</button>
+                        <button onClick={() => { ApplytoJoin(GreditName, GreditCreatorUserName) }} className="btn btn-info mx-2">ApplytoJoin</button>
 
 
                     </div>

@@ -7,71 +7,51 @@ const Stats = () => {
 
   let params = useParams()
   console.log("params", params.Name)
-  const [greditstats, setgreditstats] = useState()
-  const [poststats, setpoststats] = useState()
-  const [visitstats, setvisitstats] = useState()
-  let j = 0
+  const [greditstats, setgreditstats] = useState({})
+  const [poststats, setpoststats] = useState({})
+  const [visitstats, setvisitstats] = useState({})
+  // let j = 0
 
 
+  // j = 1;
+
+
+
+  const GetStats = async () => {
+
+    let res = await fetch('http://localhost:100/api/GetStats', {
+      method: "POST",
+      body: JSON.stringify({
+        "GreditName": params.Name
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    let data = await res.json()
+
+    console.log("data", data)
+    setpoststats(data.postsbycreationdate);
+    setgreditstats(data.countByJoiningDate);
+
+    
+  }
   useEffect(() => {
-    const GetStats = async () => {
-      console.log("sex")
-
-      try {
-
-        let res = await fetch('http://localhost:100/api/GetStats', {
-          method: "POST",
-          body: JSON.stringify({
-            "GreditName": params.Name
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          },
-        })
-        let data = await res.json()
-        console.log("data", data)
-        // setgreditstats(data.countByJoiningDate)
-        setpoststats(data.postsbycreationdate);
-      }
-      catch (err) {
-        console.log("err", err)
-      }
-    }
+    setpoststats("hi")
+    console.log("suyash")
     GetStats();
-  }, [])
+  },[])
 
   console.log("poststats", poststats)
-  // // j = 1;
-  // // const k = async () => {
-  // //   console.log("teri maa ki ")
-  // // }
-  // // useEffect(() => {
-  // //   k()
-  // //   console.log("poststats")
-  // // }, [])
+
 
   let postlabels = Object.keys(poststats);
   let postdata = Object.values(poststats);
 
-  console.log("postlabels", postlabels)
-  console.log("postdata", postdata)
-  // // let greditlabels = Object.keys(greditstats);
-  // let greditdata = Object.values(greditstats);
-
-  // let greditchartData = {
-  //   labels: greditlabels,
-  //   datasets: [
-  //     {
-  //       label: "Number of Members by Joining Date",
-  //       backgroundColor: "rgba(75,192,192,0.4)",
-  //       borderColor: "rgba(75,192,192,1)",
-  //       borderWidth: 1,
-  //       hoverBackgroundColor: "rgba(75,192,192,0.6)",
-  //       hoverBorderColor: "rgba(75,192,192,1)",
-  //       data: greditdata
-  //     }
-  //   ]
-  // };
+  // console.log("postlabels", postlabels)
+  // console.log("postdata", postdata)
+  let greditlabels = Object.keys(greditstats);
+  let greditdata = Object.values(greditstats);
   let postchartData = {
     labels: postlabels,
     datasets: [
@@ -86,6 +66,22 @@ const Stats = () => {
       }
     ]
   };
+
+
+  let greditchartData = {
+    labels: greditlabels,
+    datasets: [
+        {
+            label: "Number of Members by Joining Date",
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderWidth: 1,
+            hoverBackgroundColor: "rgba(75,192,192,0.6)",
+            hoverBorderColor: "rgba(75,192,192,1)",
+            data: greditdata
+        }
+    ]
+};
 
   let options = {
     scales: {
@@ -107,19 +103,19 @@ const Stats = () => {
     },
     barThickness: 50 // 
   };
-
   Chart.register(...registerables);
+
 
   return (
     <div>
-      {/* <button onClick={GetStats()}>dabao</button> */}
-      {/* <div className="flex justify-center ">
+      {/* <button onClick={GetStats()}>dabao</button>  */}
+      <div className="flex justify-center "> 
         <div className="memberchart">
           <h2 className="sm:text-3xl text-2xl font-medium title-font text-gray-900 mt-5 mb-10" >Bar Chart for Growth Rate of the Subgreddit in terms of Members over Time</h2>
 
           <Bar className="w-2/3" data={greditchartData} options={options} />
         </div>
-      </div> */}
+      </div>
 
       <div className="flex justify-center ">
         <div className="postchart">
@@ -128,6 +124,7 @@ const Stats = () => {
           <Bar className="w-2/3" data={postchartData} width={800} height={600} options={options} />
         </div>
       </div>
+
     </div>
   )
 }

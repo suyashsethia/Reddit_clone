@@ -468,8 +468,8 @@ const ProfilePage = () => {
                                 <p className="text-muted mb-1">Full Stack Developer</p>
                                 <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                 <div className="d-flex justify-content-center mb-2">
-                                    <button type="button" className="btn btn-info">Follow</button>
-                                    <button type="button" className="btn btn-outline-info ms-1">Message</button>
+                                    {/* <button type="button" className="btn btn-info">Follow</button> */}
+                                    {/* <button type="button" className="btn btn-outline-info ms-1">Message</button> */}
                                 </div>
                             </div>
                         </div>

@@ -336,6 +336,7 @@ const greditnameschema = new mongoose.Schema({
     GreditPosts: [],
     GreditFollowers: [],
     GreditBannedwords: [],
+    GreditVisitors: Number,
     GreditCreatedAt: { type: Date, default: Date.now },
 
 })
@@ -355,8 +356,10 @@ app.post('/api/CreateSubGredit', async (req, res) => {
         "GreditCreatorUserName": req.body.GreditCreatorUserName,
         "GreditTags": Tags_different,
         "GreditPosts": [],
-        "GreditFollowers": [{ "GreditFollowerUserName": req.body.GreditCreatorUserName, "GreditFollowerEmail": req.body.GreditCreatorEmail }],
+        "GreditFollowers": [{ "GreditFollowerUserName": req.body.GreditCreatorUserName, "GreditFollowerEmail": req.body.GreditCreatorEmail, "GreditFollowerJoiningDate": Date.now }],
         "GreditBannedwords": Banned_different,
+        "GreditVisitors": 0,
+
     }
     var mygredit = new SubGredit(newSubGredit)
     mygredit.save();
@@ -366,11 +369,14 @@ app.post('/api/CreateSubGredit', async (req, res) => {
 app.post('/api/DeleteSubgredit', async (req, res) => {
     console.log(req.body)
     Gredit = await SubGredit.findOne({ GreditName: req.body.GreditName })
+    console.log("Gredit", Gredit)
     posts_to_delete = Gredit.GreditPosts
-    Gredit.remove();
+    console.log("posts_to_delete", posts_to_delete)
     for (var i = 0; i < posts_to_delete.length; i++) {
-        await Post.findOneAndDelete({ _id: posts_to_delete[i]._id })
+        let x = await Post.findOne({ PostName: posts_to_delete[i].PostName })
+        x.remove()
     }
+    Gredit.remove();
     res.status(200).json({ success: true })
 })
 //get sub gredit of login user
@@ -423,18 +429,18 @@ app.post('/api/GreditPage', async (req, res) => {
 app.post('/api/FollowGreditPAge', async (req, res) => {
     console.log(req.body)
 
-    const GreditToFollow = await SubGredit.find({ GreditName: req.body.GreditNameTofollow })
-    const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
-    // console.log(GreditToFollow[0])
-    GreditToFollow[0].GreditFollowers.push({
-        GreditFollowerUserName: UserOfLogin[0].UserName,
-        GreditFollowerEmail: UserOfLogin[0].Email,
-    })
-    UserOfLogin[0].GreditPageFollowed.push({
-        GreditName: GreditToFollow[0].GreditName,
-    })
-    await GreditToFollow[0].save();
-    await UserOfLogin[0].save();
+    // const GreditToFollow = await SubGredit.find({ GreditName: req.body.GreditNameTofollow })
+    // const UserOfLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+    // // console.log(GreditToFollow[0])
+    // GreditToFollow[0].GreditFollowers.push({
+    //     GreditFollowerUserName: UserOfLogin[0].UserName,
+    //     GreditFollowerEmail: UserOfLogin[0].Email,
+    // })
+    // UserOfLogin[0].GreditPageFollowed.push({
+    //     GreditName: GreditToFollow[0].GreditName,
+    // })
+    // await GreditToFollow[0].save();
+    // await UserOfLogin[0].save();
     res.json({
         success: true
     })
@@ -448,8 +454,9 @@ const postSchema = new mongoose.Schema({
     PostCreatorEmail: String,
     PostCreatorUserName: String,
     PostGreditName: String,
-    PostUpvotes: Number,
-    PostDownvotes: Number,
+    PostUpvotes: [],
+    PostDownvotes: [],
+    PostComments: [],
     PostCreatedAt: { type: Date, default: Date.now },
 })
 
@@ -465,22 +472,127 @@ app.post('/api/CreatePost', async (req, res) => {
         "PostCreatorEmail": req.body.PostCreatorEmail,
         "PostCreatorUserName": req.body.PostCreatorUserName,
         "PostGreditName": req.body.PostGreditName,
-        "PostUpvotes": 0,
-        "PostDownvotes": 0,
+        "PostUpvotes": [],
+        "PostDownvotes": [],
+        "PostComments": [],
     }
     var mypost = new Post(newPost)
     mypost.save();
+    // add post to gredit 
+    const gredit = await SubGredit.findOne({ GreditName: req.body.PostGreditName })
+    gredit.GreditPosts.push({
+        PostName: req.body.PostName,
+        PostDescription: req.body.PostDescription,
+    })
+    await gredit.save();
     res.status(200).json({ success: true })
 })
 
 app.post('/api/Get_Gredit_Posts', async (req, res) => {
     console.log("sfsafsa", req.body)
+    const Gredit = await SubGredit.findOne({ GreditName: req.body.GreditName })
+
+    Gredit.GreditVisitors = Gredit.GreditVisitors + 1
+    await Gredit.save()
     const Gredit_Posts = await Post.find({ "PostGreditName": req.body.GreditName })
+    const blockedusers = await BlockedUser.find({ BlockedFromGreditName: req.body.GreditName })
+    console.log("blockedusers", blockedusers)
+    if (Gredit.GreditCreatorUserName != req.body.UserNameOfLogin) {
+        for (var i = 0; i < Gredit_Posts.length; i++) {
+            for (var j = 0; j < blockedusers.length; j++) {
+                if (Gredit_Posts[i].PostCreatorUserName == blockedusers[j].BlockedUserName) {
+                    Gredit_Posts[i].PostCreatorUserName = "Blocked User"
+                }
+            }
+        }
+    }
+
     console.log("POSTS", Gredit_Posts)
+    console.log(Gredit.GreditCreatorUserName, req.body.UserNameOfLogin)
     res.json({
         Gredit_Posts: Gredit_Posts
     })
 })
+
+
+app.post('/api/downvotePost', async (req, res) => {
+    console.log(req.body)
+
+    const post = await Post.findOne({ _id: req.body.PostId })
+
+    if (post.PostDownvotes.length > 0) {
+        {
+            for (var i = 0; i < post.PostDownvotes.length; i++) {
+                if (post.PostDownvotes[i].DownvotedByUserName == req.body.local_user.Username) {
+                    // post.PostUpvotes.splice(i, 1)
+                    // await post.save();
+                    res.json({
+                        Downvotes: post.PostDownvotes.length,
+                        success: false
+                    })
+                    return
+                }
+            }
+        }
+    }
+    post.PostDownvotes.push({
+        DownvotedByUserName: req.body.local_user.Username,
+    })
+    await post.save();
+    res.json({
+        Downvotes: post.PostDownvotes.length,
+        success: true
+    })
+})
+
+
+
+app.post('/api/upvotePost', async (req, res) => {
+    console.log(req.body)
+
+    const post = await Post.findOne({ _id: req.body.PostId })
+    if (post.PostUpvotes.length > 0) {
+        {
+            for (var i = 0; i < post.PostUpvotes.length; i++) {
+                if (post.PostUpvotes[i].UpvotedByUserName == req.body.local_user.Username) {
+                    // post.PostUpvotes.splice(i, 1)
+                    // await post.save();
+                    res.json({
+                        Upvotes: post.PostUpvotes.length,
+                        success: false
+                    })
+                    return
+                }
+            }
+        }
+    }
+    post.PostUpvotes.push({
+        UpvotedByUserName: req.body.local_user.Username,
+    })
+    await post.save();
+    res.json({
+        Upvotes: post.PostUpvotes.length,
+        success: true
+    })
+})
+
+app.post('/api/CommentOnPost', async (req, res) => {
+    console.log(req.body)
+
+    const post = await Post.findOne({ _id: req.body.PostId })
+    post.PostComments.push({
+        CommentedByUserName: req.body.local_user.UserName,
+        Comment: req.body.Comment,
+        // CommentCreatedAt: { type: Date, default: Date.now },
+    })
+    await post.save();
+    res.json({
+        success: true
+    })
+
+})
+
+
 
 
 
@@ -489,6 +601,16 @@ app.listen(port, () => {
 })
 
 
+//blocked user schema 
+const blockeduserschema = new mongoose.Schema({
+    BlockedUserName: String,
+    BlockedUserEmail: String,
+    BlockedUserCreatedAt: { type: Date, default: Date.now },
+    BlockedFromGreditName: String,
+    BlockedFromGreditCreatorUserName: String,
+})
+
+const BlockedUser = mongoose.model("BlockedUser", blockeduserschema)
 
 
 //Report Work Starts here 
@@ -557,6 +679,28 @@ app.post('/api/ReportStatus', async (req, res) => {
     console.log(ReportToChange[0])
     ReportToChange[0].ReportStatus = req.body.ReportStatus
     await ReportToChange[0].save();
+
+    if (req.body.ReportStatus === "Delete Post") {
+        const PostToDelete = await Post.find({ PostName: ReportToChange[0].ReportedPostName })
+        const reportstodelete = await Report.find({ ReportedPostName: ReportToChange[0].ReportedPostName })
+        for (var i = 0; i < reportstodelete.length; i++) {
+            await reportstodelete[i].remove()
+        }
+        await PostToDelete[0].remove();
+
+    }
+    else if (req.body.ReportStatus === "Block") {
+        const UserToBlock = await User.find({ UserName: ReportToChange[0].ReportedUserName })
+        console.log(UserToBlock[0])
+        var newBlockedUser = {
+            "BlockedUserName": UserToBlock[0].UserName,
+            "BlockedUserEmail": UserToBlock[0].UserEmail,
+            "BlockedFromGreditName": ReportToChange[0].ReportedGreditName,
+            "BlockedFromGreditCreatorUserName": ReportToChange[0].ReportedGreditCreatorUserName,
+        }
+        var myBlockedUser = new BlockedUser(newBlockedUser)
+        myBlockedUser.save();
+    }
     res.json({
         success: true
     })
@@ -607,6 +751,11 @@ app.post('/api/JoiningtoFollower', async (req, res) => {
     console.log(req.body)
     const JoiningList = await joiningSubGredit.find({ _id: req.body.JoiningId })
 
+    if (JoiningList.length === 0) {
+        res.json({
+            success: false
+        })
+    }
     if (req.body.value === 'accept') {
 
         console.log(JoiningList[0])
@@ -614,9 +763,11 @@ app.post('/api/JoiningtoFollower', async (req, res) => {
         console.log(GreditToChange[0])
         const Use = await User.find({ UserName: JoiningList[0].JoiningUserName })
         console.log(Use[0])
+        console.log(Date.now())
         GreditToChange[0].GreditFollowers.push(
             {
                 "GreditFollowerUserName": Use[0].UserName,
+                "GreditFollowerJoiningDate": Date.now,
                 "GreditFollowerEmail": Use[0].Email,
             })
 
@@ -644,11 +795,14 @@ app.post('/api/GetStats', async (req, res) => {
 
     const subgredit = await SubGredit.find({ GreditName: req.body.GreditName })
     const Followers = subgredit[0].GreditFollowers
+    console.log(Followers)
 
     let countByJoiningDate = {};
     Followers.map((follower) => {
-        if (follower.GreditCreatedAt === undefined) return;
-        let joiningDate = follower.GreditCreatedAt.toDateString();
+        // console.log(follower.GreditFollowerJoiningDate.toDateString());
+        if (follower.GreditFollowerJoiningDate === undefined) return;
+        let joiningDate = follower.GreditFollowerJoiningDate.toDateString();
+        console.log("joiningDate", joiningDate)
         if (!countByJoiningDate[joiningDate]) {
             countByJoiningDate[joiningDate] = 0;
         }
@@ -674,7 +828,42 @@ app.post('/api/GetStats', async (req, res) => {
     res.status(200).json({
         countByJoiningDate: countByJoiningDate,
         postsbycreationdate: postsbycreationdate
+
     });
+
+
+})
+
+
+const savedpostsSchema = new mongoose.Schema({
+
+    SavedPostName: String,
+    SavedPostGreditName: String,
+    SavedPostCreatorUserName: String,
+    SavedPostCreatorEmail: String,
+    SavedPostDescription: String,
+    SavedForUserName: String,
+    SavedForUserEmail: String,
+
+})
+const savedposts = mongoose.model("savedposts", savedpostsSchema)
+
+app.post('/api/SavePost', async (req, res) => {
+    console.log(req.body)
+    const post = await Post.findOne({ _id: req.body.PostId })
+
+    var newSavedPost = {
+        "SavedPostName": post.PostName,
+        "SavedPostGreditName": post.PostGreditName,
+        "SavedPostCreatorUserName": post.PostCreatorUserName,
+        "SavedPostCreatorEmail": post.PostCreatorEmail,
+        "SavedPostDescription": post.PostDescription,
+        "SavedForUserName": req.body.local_user.UserName,
+        "SavedForUserEmail": req.body.local_user.Email,
+    }
+    var mySavedPost = new savedposts(newSavedPost)
+    mySavedPost.save();
+    res.status(200).json({ success: true })
 
 
 })

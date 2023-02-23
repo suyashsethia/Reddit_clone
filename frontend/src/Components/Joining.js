@@ -7,8 +7,9 @@ import { useParams } from 'react-router-dom'
 const Joining = () => {
 
   const [JoiningList, setJoiningList] = useState([])
+  const [l, setl] = useState(0)
   const params = useParams()
-  const[a,seta] = useState(true)
+  const [a, seta] = useState(true)
   useEffect(() => {
 
     const Joining = async () => {
@@ -25,33 +26,36 @@ const Joining = () => {
       let data = await res.json()
       console.log("responsedata", data)
       setJoiningList(data.JoiningList)
+      setl(JoiningList.length)
     }
     Joining()
 
-  }, [])
+  }, [l])
   const func = async (id, value, GreditName) => {
     console.log("e.target.id", id)
     console.log("e.target.value", value)
-     
-      console.log("suyashthegreat")
-      let res = await fetch('http://localhost:100/api/JoiningtoFollower', {
-        method: "POST",
-        body: JSON.stringify({
-          "JoiningId": id,
-          "value" : value,
 
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        },
-      })
-      let data = await res.json()
-      console.log("responsedata", data.success)
-      if (data.success  && value === "accept") {
-        alert("User Added to Follower")
-        seta(false)
-      }
-    
+    console.log("suyashthegreat")
+    let res = await fetch('http://localhost:100/api/JoiningtoFollower', {
+      method: "POST",
+      body: JSON.stringify({
+        "JoiningId": id,
+        "value": value,
+
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    let data = await res.json()
+    console.log("responsedata", data.success)
+    if (data.success && value === "accept") {
+      alert("User Added to Follower")
+      seta(false)
+    }
+    if (data.success === false) {
+      alert("User Already in Follower")
+    }
   }
   return (
     <div>
@@ -65,7 +69,7 @@ const Joining = () => {
             <h6 className="card-title">Joining User Name</h6>
             <p className="card-text">{JoiningUserName}</p>
             {/* {console.log("JoiningSubGreditCreatorName",JoiningSubGreditCreatorUserName)} */}
-            <ButtonGroup style={{ display: ((JoiningSubGreditCreatorUserName === (JSON.parse(localStorage.getItem("UserData")).UserName))&&a) ? "block" : "none" }}>
+            <ButtonGroup style={{ display: ((JoiningSubGreditCreatorUserName === (JSON.parse(localStorage.getItem("UserData")).UserName))) ? "block" : "none" }}>
 
               <button className="btn btn-success" onClick={() => { func(_id, "accept", JoiningSubGreditName) }}>Accept</button>
               <button className="btn btn-danger" onClick={() => { func(_id, "reject", JoiningSubGreditName) }}>Reject</button>
