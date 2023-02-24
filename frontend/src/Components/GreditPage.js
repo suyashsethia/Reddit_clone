@@ -320,7 +320,7 @@ const GreditPage = () => {
             toast.success('Followed')
         }
         else {
-            toast.error('Already Followed')
+            toast.error('Already Followed or You are the creator of this post')
         }
 
     }

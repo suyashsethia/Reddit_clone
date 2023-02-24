@@ -349,6 +349,11 @@ app.post('/api/FollowUser', async (req, res) => {
     const UserToFollow = await User.find({ UserName: req.body.UserNameToFollow })
     const UserofLogin = await User.find({ UserName: req.body.UserNameOfLogin })
 
+    if (UserToFollow[0].UserName === UserofLogin[0].UserName) {
+        res.json({
+            success: false
+        })
+    }
     //check if already following
     for (let i = 0; i < UserofLogin[0].Following.length; i++) {
         if (UserofLogin[0].Following[i].FollowingUserName === UserToFollow[0].UserName) {
@@ -580,12 +585,29 @@ app.post('/api/Get_Gredit_Posts', async (req, res) => {
         }
     }
 
+
     console.log("POSTS", Gredit_Posts)
     console.log(Gredit.GreditCreatorUserName, req.body.UserNameOfLogin)
     res.json({
         Gredit_Posts: Gredit_Posts
     })
+    const currentDate = new Date();
+    let visitor = await Visitor.find({ GreditName: req.body.GreditName })
+    console.log(visitor)
+    if (visitor.length === 0) {
+        let newVisitor = new Visitor({
+            GreditName: req.body.GreditName,
+            Count: 1,
+            Date: currentDate.toDateString(),
+        })
+        await newVisitor.save()
+    }
+    else {
+        visitor[0].Count = visitor[0].Count + 1
+        await visitor[0].save()
+    }
 })
+
 
 
 app.post('/api/downvotePost', async (req, res) => {
@@ -919,7 +941,7 @@ app.post('/api/JoiningtoFollower', async (req, res) => {
 })
 
 app.post('/api/GetStats', async (req, res) => {
-    console.log("sex")
+    // console.log("sex")
     console.log(req.body)
 
     const subgredit = await SubGredit.find({ GreditName: req.body.GreditName })
@@ -953,16 +975,34 @@ app.post('/api/GetStats', async (req, res) => {
     console.log("postsbycreationdate", postsbycreationdate)
 
     //visitors ke liye stats
+    const visitors = await Visitor.find({ GreditName: req.body.GreditName });
+    let visitorsbydate = {};
+    visitors.map((visitor) => {
+        let date = visitor.Date;
+        if (!visitorsbydate[date]) {
+            visitorsbydate[date] = visitor.Count;
+        }
+    })
+
+
 
     res.status(200).json({
         countByJoiningDate: countByJoiningDate,
-        postsbycreationdate: postsbycreationdate
+        postsbycreationdate: postsbycreationdate,
+        visitorsbydate: visitorsbydate
 
     });
 
 
 })
 
+const visitorschema = new mongoose.Schema({
+    GreditName: String,
+    Count: Number,
+    Date: String,
+}, { unique: true })
+
+const Visitor = mongoose.model("Visitor", visitorschema)
 
 const savedpostsSchema = new mongoose.Schema({
 

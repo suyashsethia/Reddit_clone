@@ -32,7 +32,7 @@ const SavedPosts = () => {
     console.log("Saved_Posts", Saved_Posts)
 
     const RemoveSaved = async (SavedPostName) => {
-        const res = await fetch('http://localhost:3000/api/RemoveSavedPost',
+        const res = await fetch('http://localhost:100/api/RemoveSavedPost',
             {
                 method: "POST",
                 body: JSON.stringify({
