@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import withAuth from './withAuth';
+
+
+
 const MySubgredit = () => {
     let navigate = useNavigate();
     const [Subgredit, setSubgredit] = useState([])
@@ -98,4 +102,4 @@ const MySubgredit = () => {
     )
 }
 
-export default MySubgredit
+export default withAuth(MySubgredit)

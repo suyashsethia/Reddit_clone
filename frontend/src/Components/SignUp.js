@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+// import withAuth from './withAuth';
+
 
 const SignUp = () => {
     let navigate = useNavigate()

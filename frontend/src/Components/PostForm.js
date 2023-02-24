@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import withAuth from './withAuth';
+
 
 const SubgreditForm = () => {
 
@@ -57,4 +59,4 @@ const SubgreditForm = () => {
     )
 }
 
-export default SubgreditForm
+export default withAuth(SubgreditForm)

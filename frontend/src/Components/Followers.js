@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import withAuth from './withAuth';
+
 
 const Followers = () => {
     const [followers_of_login, setfollowers_of_login] = useState([])
@@ -83,4 +85,4 @@ const Followers = () => {
     )
 }
 
-export default Followers
+export default withAuth(Followers)

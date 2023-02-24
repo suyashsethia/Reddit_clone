@@ -1,4 +1,5 @@
 import React from 'react'
+import withAuth from './withAuth';
 
 const Following_Gredit = () => {
   return (
@@ -6,4 +7,4 @@ const Following_Gredit = () => {
   )
 }
 
-export default Following_Gredit
+export default withAuth(Following_Gredit)

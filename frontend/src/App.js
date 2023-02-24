@@ -52,7 +52,7 @@ function App() {
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
            <Route exact path="/GreditPage/:Name/statistics" element={<Stats></Stats>}/> 
-           <Route exact path="/GreditPage/:Name//joiningreq" element={<Joining></Joining>}/> 
+           <Route exact path="/GreditPage/:Name/joiningreq" element={<Joining></Joining>}/> 
            <Route exact path="/GreditPage/:Name/gredituser" element={<Gredit_Users></Gredit_Users>}/> 
 
            <Route exact path="/GreditPage/:Name/Reporteddd" element={<Reported></Reported>}/> 

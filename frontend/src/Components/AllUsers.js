@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 // useState
+import withAuth from './withAuth';
 
 // let x 
 
@@ -148,4 +149,4 @@ const AllUsers = () => {
     )
 }
 
-export default AllUsers 
+export default withAuth(AllUsers)

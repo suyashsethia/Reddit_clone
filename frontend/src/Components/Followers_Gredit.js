@@ -92,4 +92,4 @@ const Followers_Gredit = () => {
     )
 }
 
-export default Followers_Gredit
+export default (Followers_Gredit)

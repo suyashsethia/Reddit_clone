@@ -5,6 +5,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import withAuth from './withAuth';
+
+
+
 const SignIn = () => {
 
     let navigate = useNavigate()
@@ -71,7 +75,7 @@ const SignIn = () => {
                 //     toast.success("Correct Login id")
                 // </ToastContainer>
                 toast.success("Correct Login id")
-                setInterval(navigate("/ProfilePage"), 2000)
+                navigate("/ProfilePage")
 
             }
             else {

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import withAuth from './withAuth';
+
+
 const SavedPosts = () => {
 
     const local_user = JSON.parse(localStorage.getItem('UserData'))
     const [Saved_Posts, setSaved_Posts] = useState([])
     useEffect(() => {
         const getPosts = async () => {
-            const res = await fetch('http://localhost:3000/api/GetSavedPosts',
+            const res = await fetch('http://localhost:100/api/GetSavedPosts',
                 {
                     method: "POST",
                     body: JSON.stringify({
@@ -18,15 +21,37 @@ const SavedPosts = () => {
                     },
                 })
             let x = await res.json()
+            if (x.success === true) {
                 console.log(x.SavedPosts)
                 setSaved_Posts(x.SavedPosts)
+            }
 
-            
         }
         getPosts()
     }, [])
     console.log("Saved_Posts", Saved_Posts)
 
+    const RemoveSaved = async (SavedPostName) => {
+        const res = await fetch('http://localhost:3000/api/RemoveSavedPost',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    local_user: local_user,
+                    SavedPostName: SavedPostName
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        if (x.success === true) {
+            toast.success("Removed from Saved")
+            window.location.reload()
+        }
+        else {
+            toast.error("Error")
+        }
+    }
 
 
 
@@ -60,7 +85,7 @@ const SavedPosts = () => {
                         <p className="card-text">Post CreatorUserName: {SavedPostCreatorUserName}</p>
                         <p className="card-text">Post CreatorEmail: {SavedPostCreatorEmail}</p>
                         <p className="card-text">Post Description: {SavedPostDescription}</p>
-                    
+                        <button className="btn btn-danger" onClick={() => { RemoveSaved(SavedPostName) }}>Remove from Saved</button>
                     </div>
                 </div>
             ))}
@@ -70,4 +95,4 @@ const SavedPosts = () => {
     )
 }
 
-export default SavedPosts
+export default withAuth(SavedPosts)

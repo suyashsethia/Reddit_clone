@@ -5,11 +5,13 @@ import Modal from 'react-bootstrap/Modal';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import withAuth from './withAuth';
+
 
 function Example() {
 
     const params = useParams()
-    console.log("params.Name",params.Name)
+    console.log("params.Name", params.Name)
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -55,6 +57,9 @@ function Example() {
         console.log(x)
         if (x.success) {
             toast.success("Post Created Successfully")
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000);
         }
         else {
             toast.error("Post Creation Failed")
@@ -119,4 +124,4 @@ function Example() {
 }
 
 // render(<Example />);
-export default Example;
+export default withAuth(Example);

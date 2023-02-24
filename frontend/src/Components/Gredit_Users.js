@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import withAuth from './withAuth';
 
 const Gredit_Users = () => {
 
@@ -103,4 +104,4 @@ const Gredit_Users = () => {
   )
 }
 
-export default Gredit_Users
+export default withAuth(Gredit_Users)

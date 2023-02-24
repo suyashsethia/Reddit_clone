@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ButtonGroup from 'react-bootstrap/esm/ButtonGroup'
 // import useParams from 'react'
 import { useParams } from 'react-router-dom'
+import withAuth from './withAuth';
 
 
 const Joining = () => {
@@ -52,6 +53,7 @@ const Joining = () => {
     if (data.success && value === "accept") {
       alert("User Added to Follower")
       seta(false)
+      window.location.reload()
     }
     if (data.success === false) {
       alert("User Already in Follower")
@@ -84,4 +86,4 @@ const Joining = () => {
   )
 }
 
-export default Joining
+export default withAuth(Joining)

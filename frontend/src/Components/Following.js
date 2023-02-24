@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import withAuth from './withAuth';
 const Following = () => {
     const [following_of_login, setfollowing_of_login] = useState([])
     const Followingoflogin = async () => {
@@ -80,4 +80,4 @@ const Following = () => {
     )
 }
 
-export default Following
+export default withAuth(Following)

@@ -8,6 +8,8 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import useKeyboardShortcut from 'use-keyboard-shortcut'
+import withAuth from './withAuth';
 
 
 const GreditPage = () => {
@@ -305,7 +307,7 @@ const GreditPage = () => {
             {
                 method: "POST",
                 body: JSON.stringify({
-                    UserNameOfLogin : local_user.UserName,
+                    UserNameOfLogin: local_user.UserName,
                     UserNameToFollow: PostCreatorUserName
                 }),
                 headers: {
@@ -322,6 +324,48 @@ const GreditPage = () => {
         }
 
     }
+
+
+
+    ///key shortcut 
+
+
+    useKeyboardShortcut(
+        ["U"],
+        shortcutKeys => navigate(`/GreditPage/${params.Name}/gredituser`),
+        {
+            overrideSystem: false,
+            ignoreInputFields: false,
+            repeatOnHold: false
+        }
+    );
+    useKeyboardShortcut(
+        ["J"],
+        shortcutKeys => navigate(`/GreditPage/${params.Name}/joiningreq`),
+        {
+            overrideSystem: false,
+            ignoreInputFields: false,
+            repeatOnHold: false
+        }
+    );
+    useKeyboardShortcut(
+        ["S"],
+        shortcutKeys => navigate(`/GreditPage/${params.Name}/statistics`),
+        {
+            overrideSystem: false,
+            ignoreInputFields: false,
+            repeatOnHold: false
+        }
+    );
+    useKeyboardShortcut(
+        ["R"],
+        shortcutKeys => navigate(`/GreditPage/${params.Name}/Reporteddd`),
+        {
+            overrideSystem: false,
+            ignoreInputFields: false,
+            repeatOnHold: false
+        }
+    );
     return (
         <div>
             <ToastContainer
@@ -336,6 +380,7 @@ const GreditPage = () => {
                 pauseOnHover
                 theme="light"
             />
+            
             <section style={{ backgroundColor: '#eee' }}>
                 <div className="container py-5">
                     <div className="row">
@@ -451,16 +496,16 @@ const GreditPage = () => {
                                             <button className="btn btn-info " onClick={() => { upvotePost(_id) }} >UpVote</button>
                                             <button className="btn btn-warning mx-2 my-1" onClick={() => { downvotePost(_id) }} >DownVote</button>
                                             <button className="btn btn-danger" onClick={handleshowmodal}>Report</button>
-                                            <button className="btn btn-primary mx-2 my-1" onClick={() => { Save(_id) }}>Save Post</button>
+                                            <button className="btn btn-primary mx-2 my-1 " onClick={() => { Save(_id) }}>Save Post</button>
                                             <button className="btn btn-success" onClick={() => { FollowUser(PostCreatorUserName) }}>Follow User</button>
-                                            <input type="text" className="form-control" id="Comment" onChange={change} placeholder="Comment" />
-                                            <Button className='btn btn-primary' onClick={() => { Comment_func(_id) }}>Comment</Button>
+                                            <input type="text" className="form-control my-3 border rounded-pill border-dark" id="Comment" onChange={change} placeholder="Comment" />
+                                            <Button className='btn btn-primary my-1' onClick={() => { Comment_func(_id) }}>Comment</Button>
                                             <h5 className="card-title">Comments</h5>
                                             {PostComments.map(({ Comment, CommentedByUserName }) => (
-                                                <div key={Comment} className=" my-3 card w-75 ">
-                                                    <div className="card-body my-3">
+                                                <div key={Comment} className=" my-3 card w-75 border border-info rounded-3">
+                                                    <div className="card-body my-3 ">
                                                         <p className="card-text">{Comment}</p>
-                                                        <p className="card-text">CommentByUserName : {CommentedByUserName}</p>
+                                                        <p className="card-text ">CommentByUserName : {CommentedByUserName}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -504,4 +549,4 @@ const GreditPage = () => {
     )
 }
 
-export default GreditPage
+export default withAuth(GreditPage)

@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from 'chart.js'
+import withAuth from './withAuth';
+
+
 const Stats = () => {
 
   let params = useParams()

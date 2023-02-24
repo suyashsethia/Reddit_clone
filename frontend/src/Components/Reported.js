@@ -4,7 +4,11 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import withAuth from './withAuth';
+
+
 const Reported = () => {
+
 
   const params = useParams()
   const Gredit_Name = params.Name
@@ -139,4 +143,4 @@ const Reported = () => {
   )
 }
 
-export default Reported
+export default withAuth(Reported)

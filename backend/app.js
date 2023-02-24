@@ -323,7 +323,26 @@ app.post('/api/GetLocal_GreditFollowing', async (req, res) => {
     }
 })
 
+app.post('/api/RemoveSavedPost', async (req, res) => {
+    console.log(req.body)
+    const UserName = req.body.local_user.UserName
+    const SavedPostName = req.body.SavedPostName
 
+    const use = await User.find({ UserName: UserName })
+    // console.log(use[0].savedPosts)
+
+    ///find SavedPostName in SavedPosts
+    // const Savedpost = await savedposts.find({ SavedPostName: SavedPostName })
+    // console.log(Savedpost)
+    //remove savedpost from SavedPosts
+
+    await savedposts.deleteOne({ SavedPostName: SavedPostName })
+
+    //remove savedpost from user
+    res.json({
+        success: true
+    })
+})
 
 app.post('/api/FollowUser', async (req, res) => {
     console.log(req.body)
@@ -733,6 +752,7 @@ app.post('/api/ReportStatus', async (req, res) => {
     const ReportToChange = await Report.find({ _id: req.body.ReportId })
     console.log(ReportToChange[0])
     ReportToChange[0].ReportStatus = req.body.ReportStatus
+    ReportToChange[0].createdAt = Date.now() + 8640000000000 //so that it never gets expired 
     await ReportToChange[0].save();
 
     if (req.body.ReportStatus === "Delete Post") {
@@ -989,6 +1009,6 @@ app.post('/api/GetSavedPosts', async (req, res) => {
     console.log("SavedPosts", SavedPosts)
     res.json({
         "SavedPosts": SavedPosts,
-        "success": "true"
+        "success": true
     })
 })

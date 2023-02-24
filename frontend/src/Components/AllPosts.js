@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import withAuth from './withAuth';
+
 const AllPosts = () => {
     let navigate = useNavigate()
     const [AllPosts, setAllPosts] = useState([])
@@ -43,4 +45,4 @@ const AllPosts = () => {
     )
 }
 
-export default AllPosts
+export default withAuth(AllPosts)
