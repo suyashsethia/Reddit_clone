@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import { Route } from 'react-router-dom';
+import Joining from './Joining';
 const Navbar = () => {
     let location = useLocation()
     let user = localStorage.getItem('UserData')
@@ -15,7 +16,16 @@ const Navbar = () => {
             search: '?signin',
         })
     }
-    console.log(location.pathname)
+    console.log("location.pathname", location.pathname)
+    const stats =location.pathname + "/Stats"
+    // console.log(stats)
+    const joining =location.pathname + "/Joining"
+    // console.log(joining)
+    const users =location.pathname + "/Users"
+    // console.log(users)
+    const reporting =location.pathname + "/Reporting"
+    // console.log(reporting)
+
     return (
         <div><nav className="navbar navbar-expand-lg navbar-light bg-light">
             <Link className="navbar-brand" to="/">Navbar</Link>
@@ -70,28 +80,31 @@ const Navbar = () => {
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="ProfilePage/MySubGredit"> <i className="fab fa-android"> </i>  My Sub Greddiits Page  <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
+                    {/* <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="AllPosts"> <i className="fas fa-blog"></i>AllPosts <span className="sr-only">(current)</span></Link>
-                    </li>
+                    </li> */}
 
                     <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
                         <Link className="nav-link float-right" to="AllGredits"> <i className="fab fa-pagelines"></i>AllGredits <span className="sr-only">(current)</span></Link>
+                    </li>
+                    <li className="nav-item active" style={{ display: user ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to="SavedPosts"> <i className="fab fa-pagelines"></i>Saved Posts <span className="sr-only">(current)</span></Link>
                     </li>
                     <li style={{ display: (user) ? 'block' : 'none' }}>
                         <button  className='btn' onClick={function () {
                         navigate('/AllUsers')}} ><i className="fas fa-users"></i>ALL_Users</button>
                     </li>
-                    <li className="nav-item active" style={{ display: user&&(location.pathname.slice(0,11)==='/GreditPage') ? 'block' : 'none' }}  >
-                        <Link className="nav-link float-right" to={ location.pathname + "/Stats"}> <i className="fab fa-pagelines"></i>Stats <span className="sr-only">(current)</span></Link>
+                    <li className="nav-item active" style={{ display: (user&&(location.pathname.slice(0,11)==='/GreditPage')&&(location.pathname.slice(-11)!=(('/statistics'))) &&(location.pathname.slice(-11)!=(('/joiningreq')))&&(location.pathname.slice(-11)!=(('/gredituser')))&&(location.pathname.slice(-11)!=(('/Reporteddd'))) ) ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to={ location.pathname + "/statistics"}> <i className="fab fa-pagelines"></i>Stats <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li className="nav-item active" style={{ display: user&&(location.pathname.slice(0,11)==='/GreditPage') ? 'block' : 'none' }}  >
-                        <Link className="nav-link float-right" to={location.pathname + "/Reporting"}> <i className="fab fa-pagelines"></i>Reported <span className="sr-only">(current)</span></Link>
+                    <li className="nav-item active" style={{ display: (user&&(location.pathname.slice(0,11)==='/GreditPage')&&(location.pathname.slice(-11)!=(('/statistics'))) &&(location.pathname.slice(-11)!=(('/joiningreq')))&&(location.pathname.slice(-11)!=(('/gredituser')))&&(location.pathname.slice(-11)!=(('/Reporteddd'))) ) ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to={location.pathname + "/Reporteddd"}> <i className="fab fa-pagelines"></i>Reported <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li className="nav-item active" style={{ display: user&&(location.pathname.slice(0,11)==='/GreditPage') ? 'block' : 'none' }}  >
-                        <Link className="nav-link float-right" to={location.pathname + "/Joining"}> <i className="fab fa-pagelines"></i>Joining <span className="sr-only">(current)</span></Link>
+                    <li className="nav-item active" style={{ display: (user&&(location.pathname.slice(0,11)==='/GreditPage')&&(location.pathname.slice(-11)!=(('/statistics'))) &&(location.pathname.slice(-11)!=(('/joiningreq')))&&(location.pathname.slice(-11)!=(('/gredituser')))&&(location.pathname.slice(-11)!=(('/Reporteddd'))) ) ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to={location.pathname + "/joiningreq"}> <i className="fab fa-pagelines"></i>Joining <span className="sr-only">(current)</span></Link>
                     </li>
-                    <li className="nav-item active" style={{ display: user&&(location.pathname.slice(0,11)==='/GreditPage') ? 'block' : 'none' }}  >
-                        <Link className="nav-link float-right" to={location.pathname + "/Users"}> <i className="fab fa-pagelines"></i>Users <span className="sr-only">(current)</span></Link>
+                    <li className="nav-item active" style={{ display: (user&&(location.pathname.slice(0,11)==='/GreditPage')&&(location.pathname.slice(-11)!=(('/statistics'))) &&(location.pathname.slice(-11)!=(('/joiningreq')))&&(location.pathname.slice(-11)!=(('/gredituser')))&&(location.pathname.slice(-11)!=(('/Reporteddd'))) ) ? 'block' : 'none' }}  >
+                        <Link className="nav-link float-right" to={location.pathname + "/gredituser"}> <i className="fab fa-pagelines"></i>Users <span className="sr-only">(current)</span></Link>
                     </li>
                     <li style={{ display: user ? 'block' : 'none' }}>
                         <button className='btn' onClick={LogOut}> <i className="fas fa-sign-out-alt"></i>Logout</button>

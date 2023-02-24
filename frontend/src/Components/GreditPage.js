@@ -298,7 +298,30 @@ const GreditPage = () => {
         }
         // setShowmodal(false)
     }
+    const FollowUser = async (PostCreatorUserName) => {
+        // e.preventDefault()
+        // console.log("FollowUser", e.target.id)
+        let res = await fetch('http://localhost:100/api/FollowUser',
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    UserNameOfLogin : local_user.UserName,
+                    UserNameToFollow: PostCreatorUserName
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+        let x = await res.json()
+        console.log(x)
+        if (x.success === true) {
+            toast.success('Followed')
+        }
+        else {
+            toast.error('Already Followed')
+        }
 
+    }
     return (
         <div>
             <ToastContainer
@@ -429,10 +452,11 @@ const GreditPage = () => {
                                             <button className="btn btn-warning mx-2 my-1" onClick={() => { downvotePost(_id) }} >DownVote</button>
                                             <button className="btn btn-danger" onClick={handleshowmodal}>Report</button>
                                             <button className="btn btn-primary mx-2 my-1" onClick={() => { Save(_id) }}>Save Post</button>
+                                            <button className="btn btn-success" onClick={() => { FollowUser(PostCreatorUserName) }}>Follow User</button>
                                             <input type="text" className="form-control" id="Comment" onChange={change} placeholder="Comment" />
                                             <Button className='btn btn-primary' onClick={() => { Comment_func(_id) }}>Comment</Button>
                                             <h5 className="card-title">Comments</h5>
-                                            {PostComments.map(({ Comment ,CommentedByUserName }) => (
+                                            {PostComments.map(({ Comment, CommentedByUserName }) => (
                                                 <div key={Comment} className=" my-3 card w-75 ">
                                                     <div className="card-body my-3">
                                                         <p className="card-text">{Comment}</p>

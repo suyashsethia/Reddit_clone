@@ -128,9 +128,16 @@ const AllGredits = () => {
         if (x.success === true) {
             alert('Applied')
         }
-        if(x.success === false) {
-            alert('Already Applied')
+        if (x.success === false) {
+            if (x.status = 'Banned') {
+                alert('SADLY! You are banned from this Gredit')
+            }
+            else {
+
+                alert('Already Applied')
+            }
         }
+
     }
 
 
@@ -158,7 +165,7 @@ const AllGredits = () => {
     const fuse = new Fuse(AllGredits, options);
     const searchchange = (e) => {
         setsearched(e.target.value);
-        console.log("searched", searched , e.target.value);
+        console.log("searched", searched, e.target.value);
         const result = fuse.search(searched);
 
         settodisplaysubgreddit(result);
@@ -169,7 +176,7 @@ const AllGredits = () => {
 
 
             <div className="input-group">
-                <input placeholder="gredit search..." value ={searched} onChange={searchchange} type="search" className="form-control rounded"  aria-label="Search" aria-describedby="search-addon" />
+                <input placeholder="gredit search..." value={searched} onChange={searchchange} type="search" className="form-control rounded" aria-label="Search" aria-describedby="search-addon" />
                 <button type="button" className="btn btn-outline-primary">search</button>
             </div>
             {AllGredits.map(({ GreditName, GreditDescription, GreditTags, GreditCreatorUserName, GreditBannedwords }) => (

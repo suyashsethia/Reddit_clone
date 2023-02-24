@@ -323,6 +323,42 @@ app.post('/api/GetLocal_GreditFollowing', async (req, res) => {
     }
 })
 
+
+
+app.post('/api/FollowUser', async (req, res) => {
+    console.log(req.body)
+    const UserToFollow = await User.find({ UserName: req.body.UserNameToFollow })
+    const UserofLogin = await User.find({ UserName: req.body.UserNameOfLogin })
+
+    //check if already following
+    for (let i = 0; i < UserofLogin[0].Following.length; i++) {
+        if (UserofLogin[0].Following[i].FollowingUserName === UserToFollow[0].UserName) {
+            res.json({
+                success: false
+            })
+            return
+        }
+    }
+
+
+    UserofLogin[0].Following.push({
+        FollowingUserName: UserToFollow[0].UserName,
+        FollowingEmail: UserToFollow[0].Email,
+        FollowingFirstName: UserToFollow[0].FirstName,
+        FollowingLastName: UserToFollow[0].LastName,
+    })
+    UserToFollow[0].Followers.push({
+        FollowersUserName: UserofLogin[0].UserName,
+        FollowersEmail: UserofLogin[0].Email,
+        FollowersFirstName: UserofLogin[0].FirstName,
+        FollowersLastName: UserofLogin[0].LastName,
+    })
+    await UserToFollow[0].save();
+    await UserofLogin[0].save();
+    res.status(200).json({ success: true })
+
+
+})
 //SUB GREDDIT WORK BEGINS HERE
 
 
@@ -404,6 +440,23 @@ app.post('/api/GetGreditFollowers', async (req, res) => {
     console.log(req.body)
     const GreditName = req.body.GreditName
     const GreditPage = await SubGredit.find({ GreditName: GreditName })
+
+
+
+    // get banned users from gredit
+    const BlockedUsers = await BlockedUser.find({ BlockedFromGreditName: GreditName })
+    const Followers = GreditPage[0].GreditFollowers
+
+    //remove banned users from followers
+    for (var i = 0; i < BlockedUsers.length; i++) {
+        for (var j = 0; j < Followers.length; j++) {
+            if (BlockedUsers[i].BlockedUserEmail == Followers[j].GreditFollowerEmail) {
+                Followers.splice(j, 1)
+            }
+        }
+    }
+
+
     console.log(GreditPage[0].GreditFollowers)
     if (GreditPage == null) {
         res.json({
@@ -412,7 +465,8 @@ app.post('/api/GetGreditFollowers', async (req, res) => {
     }
     else {
         res.json({
-            GreditFollowers: GreditPage[0].GreditFollowers
+            GreditFollowers: Followers,
+            BlockedUsers: BlockedUsers
         })
     }
 })
@@ -628,6 +682,7 @@ const reportschema = new mongoose.Schema({
     ReportedGreditCreatorUserName: String,
 })
 
+reportschema.index({ createdAt: 1 }, { expireAfterSeconds: 864000 }) // 10 day
 const Report = mongoose.model("Report", reportschema)
 
 
@@ -706,7 +761,54 @@ app.post('/api/ReportStatus', async (req, res) => {
     })
 })
 
+//BANNED USERS OF GREDIT 
+const banneduserschema = new mongoose.Schema({
+    BannedUserName: String,
+    BannedFromGreditName: String,
 
+})
+
+const BannedUser = mongoose.model("BannedUser", banneduserschema)
+
+app.post('/api/LeaveGredit', async (req, res) => {
+    console.log(req.body)
+    const Gredit = await SubGredit.find({ GreditName: req.body.GreditName })
+    // const Use = await User.find({ UserName: req.body.GreditFollowerUserName })
+
+    if (Gredit[0].GreditCreatorUserName == req.body.UserNameOfLogin) {
+        res.json({
+            success: false,
+            status: "creator"
+        })
+        return
+    }
+    console.log(Gredit[0].GreditFollowers[0].GreditFollowerUserName, req.body.GreditFollowerUserName)
+    // Gredit[0].GreditFollowers.pull({
+    //     GreditFollowerUserName: req.body.GreditFollowerUserName,
+    // })
+
+    for (var i = 0; i < Gredit[0].GreditFollowers.length; i++) {
+        console.log(Gredit[0].GreditFollowers[i].GreditFollowerUserName)
+        if (Gredit[0].GreditFollowers[i].GreditFollowerUserName === req.body.GreditFollowerUserName) {
+            Gredit[0].GreditFollowers.splice(i, 1)
+            console.log("mila")
+        }
+    }
+    await Gredit[0].save();
+
+    //add user to banned user list
+    var newBannedUser = {
+        "BannedUserName": req.body.GreditFollowerUserName,
+        "BannedFromGreditName": req.body.GreditName,
+    }
+    var myBannedUser = new BannedUser(newBannedUser)
+    myBannedUser.save();
+
+    res.json({
+        success: true
+
+    })
+})
 
 //request to join subgredit page 
 const joiningSubGreditSchema = new mongoose.Schema({
@@ -721,6 +823,13 @@ const joiningSubGredit = mongoose.model("joiningSubGredit", joiningSubGreditSche
 app.post('/api/ApplytoJoin', async (req, res) => {
     console.log(req.body)
     alreadyrequested = await joiningSubGredit.find({ JoiningSubGreditName: req.body.JoiningSubGreditName, JoiningUserName: req.body.JoiningUserName })
+
+    //check if user is banned 
+    const Banned = await BannedUser.find({ BannedUserName: req.body.JoiningUserName, BannedFromGreditName: req.body.JoiningSubGreditName })
+    if (Banned.length > 0) {
+        res.status(200).json({ success: false, status: "Banned" })
+        return
+    }
 
     if (alreadyrequested.length === 0) {
         var newjoiningSubGredit = {
@@ -852,18 +961,34 @@ app.post('/api/SavePost', async (req, res) => {
     console.log(req.body)
     const post = await Post.findOne({ _id: req.body.PostId })
 
-    var newSavedPost = {
-        "SavedPostName": post.PostName,
-        "SavedPostGreditName": post.PostGreditName,
-        "SavedPostCreatorUserName": post.PostCreatorUserName,
-        "SavedPostCreatorEmail": post.PostCreatorEmail,
-        "SavedPostDescription": post.PostDescription,
-        "SavedForUserName": req.body.local_user.UserName,
-        "SavedForUserEmail": req.body.local_user.Email,
+    // find already saved post
+    const alreadySaved = await savedposts.find({ SavedPostName: post.PostName, SavedForUserName: req.body.local_user.UserName })
+    if (alreadySaved.length === 0) {
+        var newSavedPost = {
+            "SavedPostName": post.PostName,
+            "SavedPostGreditName": post.PostGreditName,
+            "SavedPostCreatorUserName": post.PostCreatorUserName,
+            "SavedPostCreatorEmail": post.PostCreatorEmail,
+            "SavedPostDescription": post.PostDescription,
+            "SavedForUserName": req.body.local_user.UserName,
+            "SavedForUserEmail": req.body.local_user.Email,
+        }
+        var mySavedPost = new savedposts(newSavedPost)
+        mySavedPost.save();
+        res.status(200).json({ success: true })
     }
-    var mySavedPost = new savedposts(newSavedPost)
-    mySavedPost.save();
-    res.status(200).json({ success: true })
+    else {
+        res.status(200).json({ success: false })
+    }
 
+})
 
+app.post('/api/GetSavedPosts', async (req, res) => {
+    console.log(req.body)
+    const SavedPosts = await savedposts.find({ SavedForUserName: req.body.local_user.UserName })
+    console.log("SavedPosts", SavedPosts)
+    res.json({
+        "SavedPosts": SavedPosts,
+        "success": "true"
+    })
 })

@@ -28,7 +28,7 @@ import Reported from './Components/Reported';
 import Stats from './Components/Stats';
 import Joining from './Components/Joining';
 import Gredit_Users from './Components/Gredit_Users';
-
+import SavedPosts from './Components/SavedPosts';
 function App() {
   return (
     <Router>
@@ -47,13 +47,15 @@ function App() {
             </Route>
             <Route exact path="/AllUsers" element={<AllUsers></AllUsers>}>
             </Route>
+            <Route exact path="/SavedPosts" element={<SavedPosts></SavedPosts>}>
+            </Route>
             {/* <Route exact path="/SignUp" element={<SignUp></SignUp>}>
             </Route> */}
-           <Route exact path="/GreditPage/:Name/Stats" element={<Stats></Stats>}/> 
-           <Route exact path="/GreditPage/:Name/Joining" element={<Joining></Joining>}/> 
-           <Route exact path="/GreditPage/:Name/Users" element={<Gredit_Users></Gredit_Users>}/> 
+           <Route exact path="/GreditPage/:Name/statistics" element={<Stats></Stats>}/> 
+           <Route exact path="/GreditPage/:Name//joiningreq" element={<Joining></Joining>}/> 
+           <Route exact path="/GreditPage/:Name/gredituser" element={<Gredit_Users></Gredit_Users>}/> 
 
-           <Route exact path="/GreditPage/:Name/Reporting" element={<Reported></Reported>}/> 
+           <Route exact path="/GreditPage/:Name/Reporteddd" element={<Reported></Reported>}/> 
             <Route exact path="/Sub_Greddiit_Page" element={"Sub_Greddiit_Page"}></Route>
 
             <Route exact path="/ProfilePage" element={(<ProfilePage></ProfilePage>)}></Route>
